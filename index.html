@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>CPD Compass</title>
 <meta name="description" content="Free CPD tracker for Australian nurses and midwives, built around the NMBA CPD registration standard.">
+<meta name="robots" content="noindex, nofollow">
 <meta name="theme-color" content="#0e8077">
 <meta property="og:title" content="CPD Compass — Your CPD, on course.">
 <meta property="og:description" content="Free CPD tracking for Australian nurses and midwives. Hours countdown, certificate scanning, learning plans and an audit-ready portfolio.">
@@ -196,7 +197,7 @@ table{border-collapse:collapse;width:100%}
    CPD Compass — free CPD tracker for Australian nurses & midwives
    All data stays on the device (IndexedDB). No server, no account.
    ========================================================= */
-const APP = { name: 'CPD Compass', version: '1.4.0' };
+const APP = { name: 'CPD Compass', version: '1.4.1-beta' };
 /* ---- BRAND: edit these to rebrand ---- */
 const BRAND = {
   tagline: 'Your CPD, on course.',
@@ -657,7 +658,7 @@ function shell() {
 function render() {
   if (!S.settings.onboarded) return renderOnboarding();
   if (!$('#hTitle')) shell();
-  $('#hTitle').innerHTML = { home: '<span class="wm">CPD <b>Compass</b></span>', log: 'CPD log', plan: 'Learning plan', learn: 'Free learning', profile: 'Profile' }[S.tab];
+  $('#hTitle').innerHTML = { home: '<span class="wm">CPD <b>Compass</b></span> <span class="chip" style="font-size:10px;padding:2px 7px;vertical-align:middle">BETA</span>', log: 'CPD log', plan: 'Learning plan', learn: 'Free learning', profile: 'Profile' }[S.tab];
   $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
   $('.fab').style.display = ['home', 'log'].includes(S.tab) ? '' : 'none';
   $('#view').innerHTML = VIEWS[S.tab]();
@@ -852,7 +853,7 @@ function renderOnboarding() {
   const steps = [
     () => `${isIOS && !isStandalone ? `<div class="install"><b>Install it first.</b> In Safari tap <b>Share</b> → <b>Add to Home Screen</b>, then open CPD Compass from your home screen. On iPhone and iPad, anything entered here in Safari stays in Safari and won't appear in the installed app.</div>` : ''}
       <div class="onb-hero"><div class="logo" style="width:64px;height:64px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.25)">${BRAND.mark}</div>
-      <h1>CPD Compass</h1><div class="tag">${esc(BRAND.tagline)}</div><p style="margin:8px 0 0;opacity:.92">${esc(BRAND.sub)}</p></div>
+      <h1>CPD Compass <span style="font-size:13px;vertical-align:middle;background:#ffc2b3;color:#12355b;padding:3px 8px;border-radius:99px;font-weight:700">BETA</span></h1><div class="tag">${esc(BRAND.tagline)}</div><p style="margin:8px 0 0;opacity:.92">${esc(BRAND.sub)}</p></div>
       <div class="card small">
         <div class="check"><span class="dot y">✓</span><div>Counts down your hours to 31 May using the NMBA CPD standard — including dual registration and endorsements.</div></div>
         <div class="check"><span class="dot y">✓</span><div>Photograph or scan certificates and keep them with each activity.</div></div>
@@ -861,6 +862,7 @@ function renderOnboarding() {
         <div class="check"><span class="dot y">✓</span><div>Optional AI help using your own Claude, ChatGPT or Gemini key.</div></div>
       </div>
       <p class="hint">Private by design: everything stays on this device. No account, no tracking. <a href="#" data-act="privacy">Privacy statement</a>. Not affiliated with, or endorsed by, Ahpra or the NMBA.</p>
+      <div class="callout" style="margin:0 0 10px"><b>Beta test version.</b> Thanks for trying it! Things may change — please use <b>Back up everything</b> in Settings regularly, and send feedback to the person who shared this with you.</div>
       <button class="btn block" data-act="onbNext" style="margin-top:8px">Build my profile</button>
       <button class="btn ghost block" data-act="onbRestore">Restore from a backup</button>
       ${BRAND.credit ? `<p class="hint" style="text-align:center">${esc(BRAND.credit)}</p>` : ''}`,
