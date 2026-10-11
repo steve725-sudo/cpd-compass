@@ -1,0 +1,1375 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CPD Compass</title>
+<meta name="description" content="Free CPD tracker for Australian nurses and midwives, built around the NMBA CPD registration standard.">
+<meta name="theme-color" content="#0e8077">
+<meta property="og:title" content="CPD Compass — Your CPD, on course.">
+<meta property="og:description" content="Free CPD tracking for Australian nurses and midwives. Hours countdown, certificate scanning, learning plans and an audit-ready portfolio.">
+<meta property="og:image" content="share-card.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="CPD Compass">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{
+  /* CPD Compass brand: Compass Teal #0E8077, Harbour Navy #12355B, Coral #F2785C, Sand #F6F4EF */
+  --bg:#f6f4ef;--card:#ffffff;--card2:#f1efe8;--text:#13202b;--muted:#5b6670;--line:#e3e0d7;
+  --brand:#0e8077;--brand-ink:#ffffff;--brand-soft:#dcefec;--navy:#12355b;--coral:#e8664a;--accent:#e8664a;--ok:#15803d;--warn:#b45309;--danger:#b91c1c;
+  --nursing:#0e8077;--midwifery:#7c3aed;--endorsement:#e8664a;
+  --shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.05);--r:16px;
+  --safe-b:env(safe-area-inset-bottom,0px);--safe-t:env(safe-area-inset-top,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1219;--card:#141c25;--card2:#1a2430;--text:#e6eeec;--muted:#93a29e;--line:#26332f;
+  --brand:#3cc7b8;--brand-ink:#04201c;--brand-soft:#123a35;--navy:#0b2440;--coral:#f58a70;--accent:#f58a70;--ok:#4ade80;--warn:#f59e0b;--danger:#f87171;
+  --nursing:#3cc7b8;--midwifery:#a78bfa;--endorsement:#f58a70;--shadow:none;}}
+:root[data-theme="dark"]{
+  --bg:#0c1219;--card:#141c25;--card2:#1a2430;--text:#e6eeec;--muted:#93a29e;--line:#26332f;
+  --brand:#3cc7b8;--brand-ink:#04201c;--brand-soft:#123a35;--navy:#0b2440;--coral:#f58a70;--accent:#f58a70;--ok:#4ade80;--warn:#f59e0b;--danger:#f87171;
+  --nursing:#3cc7b8;--midwifery:#a78bfa;--endorsement:#f58a70;--shadow:none;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--text);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%}
+body{min-height:100vh;overflow-x:hidden}
+a{color:var(--brand)}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select,textarea{font:inherit;color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 12px;width:100%;font-size:16px}
+textarea{min-height:96px;resize:vertical}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--brand);outline-offset:0;border-color:transparent}
+label.f{display:block;margin:12px 0 0}
+label.f>span{display:block;font-size:13px;font-weight:600;color:var(--muted);margin-bottom:5px}
+.row{display:flex;gap:10px}.row>*{flex:1;min-width:0}
+.hint{font-size:13px;color:var(--muted);margin-top:5px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px}
+
+/* header + nav */
+header.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);padding-top:var(--safe-t);border-bottom:1px solid var(--line)}
+header.top .wrap{display:flex;align-items:center;gap:10px;height:56px}
+.logo{width:32px;height:32px;border-radius:9px;overflow:hidden;flex:none;display:block}.logo svg{width:100%;height:100%;display:block}
+.wm{font-weight:800;letter-spacing:-.02em}.wm b{color:var(--brand);font-weight:600}
+header.top h1{font-size:18px;margin:0;flex:1;font-weight:700;letter-spacing:-.01em}
+.icon-btn{border:0;background:var(--card);border:1px solid var(--line);width:40px;height:40px;border-radius:12px;display:grid;place-items:center}
+nav.tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--card);border-top:1px solid var(--line);padding-bottom:var(--safe-b)}
+nav.tabs .wrap{display:flex;padding:0 4px}
+nav.tabs button{flex:1;border:0;background:none;padding:8px 0 7px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11px;font-weight:600;color:var(--muted)}
+nav.tabs button.on{color:var(--brand)}
+nav.tabs svg{width:24px;height:24px}
+main{padding:14px 0 calc(96px + var(--safe-b))}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow)}
+.card h2{font-size:16px;margin:0 0 10px;display:flex;align-items:center;gap:8px}
+.card h2 .sp{flex:1}
+.sec-title{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:20px 2px 8px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.btn{border:0;border-radius:12px;padding:11px 16px;font-weight:650;background:var(--brand);color:var(--brand-ink);display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px}
+.btn.sec{background:var(--card2);color:var(--text);border:1px solid var(--line)}
+.btn.ghost{background:none;color:var(--brand);padding:8px 10px;min-height:36px}
+.btn.danger{background:none;color:var(--danger);border:1px solid var(--line)}
+.btn.sm{padding:7px 12px;min-height:34px;font-size:14px;border-radius:10px}
+.btn.block{width:100%}
+.btn:disabled{opacity:.5}
+.chip{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;font-size:12.5px;font-weight:600;background:var(--card2);border:1px solid var(--line);color:var(--text);white-space:nowrap}
+.chip.on{background:var(--brand);color:var(--brand-ink);border-color:var(--brand)}
+.chip.warn{background:color-mix(in srgb,var(--warn) 14%,transparent);color:var(--warn);border-color:transparent}
+.chip.ok{background:color-mix(in srgb,var(--ok) 14%,transparent);color:var(--ok);border-color:transparent}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.scroller{display:flex;gap:6px;overflow-x:auto;padding:2px 0 6px;scrollbar-width:none}.scroller::-webkit-scrollbar{display:none}
+button.chip{cursor:pointer}
+
+/* home */
+.hero{background:linear-gradient(135deg,#0e8077,#12355b);color:#fff;border:0;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-50px;top:-50px;width:210px;height:210px;border-radius:50%;border:16px solid rgba(255,255,255,.08);pointer-events:none}
+.hero .accent{color:#ffc2b3}
+.hero .big{font-size:44px;font-weight:800;line-height:1;letter-spacing:-.02em}
+.hero .lbl{opacity:.9;font-size:14px}
+.rings{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.ring{text-align:center;padding:6px 4px}
+.ring svg{width:110px;height:110px}
+.ring .t{font-weight:700;font-size:14px;margin-top:2px}
+.ring .s{font-size:12.5px;color:var(--muted)}
+.qa{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.qa button{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 4px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12px;font-weight:600}
+.qa svg{width:26px;height:26px;color:var(--brand)}
+.check{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--line)}
+.check:first-of-type{border-top:0}
+.dot{width:22px;height:22px;border-radius:50%;flex:none;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff}
+.dot.y{background:var(--ok)}.dot.n{background:var(--warn)}
+
+/* list items */
+.item{display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--line);align-items:flex-start}
+.item:first-child{border-top:0}
+.item .main{flex:1;min-width:0}
+.item .ttl{font-weight:650;overflow-wrap:anywhere}
+.item .meta{font-size:13px;color:var(--muted)}
+.hrs{font-weight:800;font-size:15px;white-space:nowrap}
+.tap{cursor:pointer}
+.empty{text-align:center;color:var(--muted);padding:26px 10px}
+.bar{height:8px;background:var(--card2);border-radius:99px;overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.fab{position:fixed;right:max(16px,calc(50vw - 364px));bottom:calc(76px + var(--safe-b));z-index:15;width:58px;height:58px;border-radius:18px;border:0;background:var(--brand);color:var(--brand-ink);box-shadow:0 6px 18px rgba(0,0,0,.2);display:grid;place-items:center}
+.search{position:relative;margin-bottom:10px}
+.search input{padding-left:38px}
+.search svg{position:absolute;left:11px;top:12px;width:20px;height:20px;color:var(--muted)}
+
+/* profile */
+.pf-banner{height:92px;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(120deg,#0e8077,#12355b);margin:-16px -16px 0;position:relative;overflow:hidden}.pf-banner::after{content:"";position:absolute;right:24px;top:-60px;width:170px;height:170px;border-radius:50%;border:14px solid rgba(255,255,255,.1)}
+.pf-photo{position:relative;z-index:1;width:96px;height:96px;border-radius:50%;border:4px solid var(--card);background:var(--card2);margin-top:-50px;object-fit:cover;display:grid;place-items:center;font-size:34px;font-weight:800;color:var(--muted);overflow:hidden}
+.pf-photo img{width:100%;height:100%;object-fit:cover}
+.pf-name{font-size:22px;font-weight:800;margin:8px 0 2px}
+.edit{border:0;background:none;color:var(--muted);padding:4px;border-radius:8px}
+
+/* sheets */
+.sheet-wrap{position:fixed;inset:0;z-index:50;background:rgba(0,0,0,.42);display:flex;align-items:flex-end;justify-content:center;animation:fade .15s}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:94vh;border-radius:20px 20px 0 0;display:flex;flex-direction:column;animation:up .2s ease-out}
+@media (min-width:700px){.sheet-wrap{align-items:center}.sheet{border-radius:20px;max-height:88vh}}
+.sheet-h{display:flex;align-items:center;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.sheet-h h3{margin:0;font-size:17px;flex:1}
+.sheet-b{overflow-y:auto;padding:4px 16px 16px;-webkit-overflow-scrolling:touch}
+.sheet-f{padding:12px 16px calc(12px + var(--safe-b));border-top:1px solid var(--line);display:flex;gap:10px}
+@keyframes up{from{transform:translateY(40px);opacity:.6}}@keyframes fade{from{opacity:0}}
+.att{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.att .th{width:84px;height:84px;border-radius:10px;border:1px solid var(--line);background:var(--card2);position:relative;overflow:hidden;display:grid;place-items:center;font-size:12px;text-align:center;color:var(--muted)}
+.att .th img{width:100%;height:100%;object-fit:cover}
+.att .th button{position:absolute;top:3px;right:3px;width:24px;height:24px;border-radius:50%;border:0;background:rgba(0,0,0,.6);color:#fff;font-size:14px;line-height:1}
+.cbx{display:flex;align-items:center;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:10px;background:var(--card);font-size:14.5px;font-weight:600}
+.cbx input{width:20px;height:20px;accent-color:var(--brand);margin:0}
+.callout{border-radius:12px;padding:10px 12px;font-size:14px;background:color-mix(in srgb,var(--warn) 12%,transparent);color:var(--text);margin-top:10px}
+.callout.info{background:var(--brand-soft)}
+.ai-out{white-space:pre-wrap;background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:12px;font-size:14.5px;margin-top:10px}
+.chat{display:flex;flex-direction:column;gap:8px;padding:10px 0}
+.msg{max-width:88%;padding:10px 12px;border-radius:14px;white-space:pre-wrap;font-size:15px}
+.msg.u{align-self:flex-end;background:var(--brand);color:var(--brand-ink)}
+.msg.a{align-self:flex-start;background:var(--card);border:1px solid var(--line)}
+canvas.scan{width:100%;max-height:52vh;object-fit:contain;background:#222;border-radius:12px;display:block}
+.spin{width:18px;height:18px;border:2.5px solid currentColor;border-right-color:transparent;border-radius:50%;animation:rot .7s linear infinite;display:inline-block}
+@keyframes rot{to{transform:rotate(360deg)}}
+#toast{position:fixed;left:50%;bottom:calc(90px + var(--safe-b));transform:translateX(-50%);background:#14201d;color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;z-index:90;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw;text-align:center}
+#toast.show{opacity:1}
+.onb{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:calc(24px + var(--safe-t)) 0 calc(24px + var(--safe-b))}
+.bk{display:flex;gap:14px;padding:14px 0;border-top:1px solid var(--line)}.bk:first-child{border-top:0}
+.bk .cv{width:84px;height:126px;flex:none;border-radius:6px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.18);background:linear-gradient(160deg,#12355b,#0b1f36);color:#f6e7c9;display:flex;align-items:center;justify-content:center;text-align:center;padding:8px;font:600 12px/1.25 Georgia,'Times New Roman',serif}
+.bk .cv img{width:100%;height:100%;object-fit:cover;display:block}
+.bk h4{margin:0;font:700 17px/1.25 Georgia,'Times New Roman',serif}
+.thanks{border:0;background:linear-gradient(135deg,color-mix(in srgb,var(--coral) 16%,var(--card)),var(--card));border:1px solid color-mix(in srgb,var(--coral) 35%,transparent)}
+.onb h1{font-size:30px;letter-spacing:-.02em;margin:14px 0 6px}
+.onb-hero{background:linear-gradient(150deg,#0e8077,#12355b);color:#fff;border-radius:24px;padding:26px 22px;position:relative;overflow:hidden;margin-bottom:14px}
+.onb-hero::after{content:"";position:absolute;right:-70px;bottom:-70px;width:240px;height:240px;border-radius:50%;border:18px solid rgba(255,255,255,.08)}
+.onb-hero h1{color:#fff;margin:14px 0 4px;font-size:32px}.onb-hero .tag{color:#ffc2b3;font-weight:700;font-size:17px}
+.install{border-radius:14px;padding:12px 14px;background:color-mix(in srgb,var(--coral) 14%,var(--card));border:1px solid color-mix(in srgb,var(--coral) 40%,transparent);font-size:14px;margin-bottom:12px}
+.steps{display:flex;gap:6px;margin-bottom:16px}.steps i{flex:1;height:4px;border-radius:4px;background:var(--line)}.steps i.on{background:var(--brand)}
+table{border-collapse:collapse;width:100%}
+#print{display:none}
+@media print{
+  html,body{background:#fff!important;color:#000}
+  #app,.sheet-wrap,#toast{display:none!important}
+  #print{display:block;font:10.5pt/1.4 -apple-system,Helvetica,Arial,sans-serif;color:#000}
+  #print h1{font-size:18pt;margin:0 0 4pt}#print h2{font-size:12.5pt;margin:14pt 0 6pt;border-bottom:1.5pt solid #0f766e;padding-bottom:2pt;color:#0f766e}
+  #print table{margin-top:4pt}#print th,#print td{border:.6pt solid #999;padding:4pt 5pt;vertical-align:top;text-align:left;font-size:9pt}
+  #print th{background:#e8f3f1}
+  #print .ev{page-break-inside:avoid;margin:8pt 0}#print .ev img{max-width:100%;max-height:640px;border:.5pt solid #ccc}
+  #print tr{page-break-inside:avoid}
+  #print .rs-h{display:flex;gap:14pt;align-items:center}#print .rs-h img{width:70pt;height:70pt;border-radius:50%;object-fit:cover}
+  #print .job{margin:0 0 8pt;page-break-inside:avoid}#print .job b{font-size:11pt}
+  @page{margin:14mm}
+}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="print"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="inCam" accept="image/*" capture="environment" hidden>
+<input type="file" id="inFile" accept="image/*,application/pdf" multiple hidden>
+<input type="file" id="inPhoto" accept="image/*" hidden>
+<input type="file" id="inBackup" accept="application/json,.json" hidden>
+
+<script>
+'use strict';
+/* =========================================================
+   CPD Compass — free CPD tracker for Australian nurses & midwives
+   All data stays on the device (IndexedDB). No server, no account.
+   ========================================================= */
+const APP = { name: 'CPD Compass', version: '1.4.0' };
+/* ---- BRAND: edit these to rebrand ---- */
+const BRAND = {
+  tagline: 'Your CPD, on course.',
+  sub: 'Free CPD tracking for Australian nurses and midwives.',
+  credit: '',            // e.g. 'Made by SimSmart' — shown on the welcome screen and About
+  contact: '',           // e.g. an email for feedback; shown in About when set
+  /* "Say thanks" — a gentle, optional way to support the app. Set enabled:false to remove it. */
+  support: {
+    enabled: true,
+    author: 'Samantha Grosser',
+    who: 'my wife',
+    site: 'https://www.samgrosserbooks.com',
+    line: 'historical fiction, much of it set in the Second World War',
+    books: [
+      { title: 'All That Remains', era: '1939 – present day', url: 'https://www.samgrosserbooks.com/historical-fiction-all-that-remains', cover: 'books/all-that-remains.jpg',
+        blurb: 'On the eve of war, Eva Ravensby turns down Ben Marlowe’s proposal — a choice that shapes both their lives. Decades later she must face whether she was ever truly the life he chose.' },
+      { title: 'Where the Light Still Shone', era: '1943 & 1995', url: 'https://www.samgrosserbooks.com/wwwii-fiction-where-the-light-still-shone', cover: 'books/where-the-light-still-shone.jpg',
+        blurb: 'A village pub near an American airbase, a gunner named Zack, and Peggy’s quiet life upended. Fifty years on, her granddaughter uncovers the love affair.' },
+      { title: 'The Last Goodbye', era: '1944 & 2014', url: 'https://www.samgrosserbooks.com/wwii-fiction-the-last-goodbye', cover: 'books/the-last-goodbye.jpg',
+        blurb: 'Isobel longs to join the WAAF until an American airman changes her plans. Seventy years later, an inherited English house reveals the secrets she left behind.' },
+      { title: 'An Officer’s Affair', era: '1944', url: 'https://www.samgrosserbooks.com/wwii-fiction-an-officers-affair', cover: 'books/an-officers-affair.jpg',
+        blurb: 'Rachel’s husband comes home from Italy a changed man. A visit from Captain Andrews brings hope — and questions about what really happened there.' },
+    ],
+  },
+  mark: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><defs><linearGradient id="cg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0E8077"/><stop offset="1" stop-color="#12355B"/></linearGradient></defs><rect width="512" height="512" fill="url(#cg)"/><circle cx="256" cy="256" r="148" fill="none" stroke="#fff" stroke-width="20"/><g stroke="#fff" stroke-width="16" stroke-linecap="round"><path d="M256 132v26M256 354v26M132 256h26M354 256h26"/></g><g transform="rotate(38 256 256)"><path d="M256 150 286 256H226Z" fill="#F2785C"/><path d="M226 256h60L256 362Z" fill="#fff"/></g><circle cx="256" cy="256" r="15" fill="#12355B" stroke="#fff" stroke-width="6"/></svg>`,
+};
+const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isStandalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+
+/* ---------- helpers ---------- */
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+const pad = n => String(n).padStart(2, '0');
+const iso = d => { d = new Date(d); return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()); };
+const parseISO = s => { if (!s) return new Date(NaN); const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmtDate = s => { const d = typeof s === 'string' ? parseISO(s) : s; return isNaN(d) ? '' : d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short', year: 'numeric' }); };
+const fmtH = n => { n = Math.round((Number(n) || 0) * 100) / 100; return (n % 1 ? n.toFixed(2).replace(/0$/, '') : n) + ''; };
+const plural = (n, w) => `${n} ${w}${n === 1 ? '' : 's'}`;
+function toast(msg, ms = 2400) { const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(() => t.classList.remove('show'), ms); }
+const blobToDataURL = b => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = rej; r.readAsDataURL(b); });
+const dataURLToBlob = async u => (await fetch(u)).blob();
+
+/* ---------- icons ---------- */
+const I = {
+  home: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg>',
+  log: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+  plan: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>',
+  learn: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 7l10-4 10 4-10 4z"/><path d="M6 9v5c0 2 3 3.5 6 3.5s6-1.5 6-3.5V9"/><path d="M22 7v6"/></svg>',
+  user: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+  gear: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',
+  spark: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></svg>',
+  plus: '<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>',
+  cam: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/><circle cx="12" cy="13.5" r="3.5"/></svg>',
+  file: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/></svg>',
+  pen: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 1 1 3 3L7 19l-4 1 1-4z"/></svg>',
+  search: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>',
+  x: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>',
+  ext: '<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 4h6v6M20 4 10 14M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5"/></svg>',
+  clock: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="13" r="8"/><path d="M12 9v4l2.5 2M9 2h6"/></svg>',
+  compass: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>',
+};
+
+/* ---------- NMBA rules (Registration standard: CPD, effective 1 June 2016) ---------- */
+const STREAMS = {
+  nursing: { label: 'Nursing', short: 'Nursing', color: 'var(--nursing)' },
+  midwifery: { label: 'Midwifery', short: 'Midwifery', color: 'var(--midwifery)' },
+  endorsement: { label: 'Endorsement', short: 'Endorsement', color: 'var(--endorsement)' },
+};
+const ENDORSEMENTS = {
+  none: 'None',
+  NP: 'Nurse practitioner',
+  MP: 'Midwife practitioner',
+  SM: 'Scheduled medicines (midwife)',
+};
+const ACT_TYPES = [
+  'Accredited course / tertiary study',
+  'Conference, seminar or symposium',
+  'Short course or workshop',
+  'Online module / eLearning',
+  'Webinar',
+  'Mandatory workplace learning (new content)',
+  'Self-directed learning (journal articles, guidelines)',
+  'Journal club / case review',
+  'In-service education / grand rounds',
+  'Preparing & presenting education',
+  'Quality improvement / research project',
+  'Clinical skills workshop / simulation',
+  'Other structured learning',
+];
+const TEMPLATES = [
+  { label: 'Journal article', type: 'Self-directed learning (journal articles, guidelines)', ph: 'e.g. Reading: early warning scores in ED', topics: 'Key findings and how they compare with current practice' },
+  { label: 'Online module', type: 'Online module / eLearning', ph: 'e.g. Recognising sepsis (eLearning)' },
+  { label: 'In-service', type: 'In-service education / grand rounds', ph: 'e.g. New infusion pump in-service', hours: 1 },
+  { label: 'Webinar', type: 'Webinar', ph: 'e.g. ACN webinar: deteriorating patient', hours: 1 },
+  { label: 'Conference', type: 'Conference, seminar or symposium', ph: 'e.g. State emergency nursing conference' },
+  { label: 'Journal club', type: 'Journal club / case review', ph: 'e.g. Unit journal club: pressure injury bundle', hours: 1 },
+  { label: 'Teaching others', type: 'Preparing & presenting education', ph: 'e.g. Prepared and delivered an in-service on…', topics: 'Count your preparation and learning time, not just delivery' },
+  { label: 'NMBA codes & standards', type: 'Self-directed learning (journal articles, guidelines)', title: 'Review of NMBA Code of conduct and Standards for practice', topics: 'Reviewed the code and standards and compared against my current practice' },
+  { label: 'Simulation', type: 'Clinical skills workshop / simulation', ph: 'e.g. MET call simulation' },
+];
+const STANDARDS = {
+  RN: { title: 'RN Standards for Practice (2016)', items: [
+    '1. Thinks critically and analyses nursing practice',
+    '2. Engages in therapeutic and professional relationships',
+    '3. Maintains the capability for practice',
+    '4. Comprehensively conducts assessments',
+    '5. Develops a plan for nursing practice',
+    '6. Provides safe, appropriate and responsive quality nursing practice',
+    '7. Evaluates outcomes to inform nursing practice'] },
+  EN: { title: 'EN Standards for Practice (2016)', items: [
+    '1. Professional and collaborative practice',
+    '2. Provision of care',
+    '3. Reflective and analytical practice'] },
+  RM: { title: 'Midwife Standards for Practice (2018)', items: [
+    '1. Promotes health and wellbeing through evidence-based midwifery practice',
+    '2. Engages in professional relationships and respectful partnerships',
+    '3. Demonstrates the capability and accountability for midwifery practice',
+    '4. Undertakes comprehensive assessments',
+    '5. Develops plans for midwifery practice',
+    '6. Provides safe and quality midwifery practice',
+    '7. Evaluates outcomes to improve midwifery practice'] },
+  NP: { title: 'Nurse Practitioner Standards for Practice (2021)', items: [
+    '1. Assesses using diagnostic capability',
+    '2. Plans care and engages others',
+    '3. Prescribes and implements therapeutic interventions',
+    '4. Evaluates outcomes and improves practice'] },
+};
+const ROUTINE_RE = /\b(cpr|bls|basic life support|fire|evacuation|manual handling|hand hygiene refresher|annual refresher)\b/i;
+const STATES = ['ACT', 'NSW', 'NT', 'QLD', 'SA', 'TAS', 'VIC', 'WA'];
+
+const RULES_CHECKED = 'October 2026';
+const PRIVACY_HTML = `
+<p style="margin-top:0"><b>CPD Compass collects no personal information.</b></p>
+<ul style="padding-left:18px;margin:6px 0">
+<li>Everything you enter — your profile, CPD records, plans and certificate photos — is stored only on your device, in the app's private storage.</li>
+<li>There are no accounts, no analytics, no third-party advertising, no tracking cookies, and no server that receives your data. The publisher cannot see your records.</li>
+<li>The app includes an optional “Say thanks” section linking to novels by the developer's wife, author Samantha Grosser. Those links are not tracked, earn no commission, and only open if you tap them. Book covers are stored inside the app, so viewing them contacts no one.</li>
+<li>The app is hosted on GitHub Pages. Like any website, GitHub may log basic technical data (e.g. IP address) when the app is downloaded — see GitHub's privacy statement.</li>
+<li><b>AI features are optional.</b> If you add your own AI key, the text (and any certificate image) you choose to send goes directly from your device to that provider (Anthropic, OpenAI or Google) under their terms. Your key is stored only on your device and is never included in backups. Never send patient-identifying information.</li>
+<li>Backups are files you create and control. Store them somewhere secure.</li>
+<li>Links in the Free learning directory take you to other organisations' websites, which have their own privacy policies.</li>
+<li>To remove all data, use <b>Delete all data on this device</b> in Settings, or delete the app.</li>
+</ul>`;
+const RULES_HTML = `
+<p><b>Rules last checked:</b> ${RULES_CHECKED}.</p><p><b>Source:</b> NMBA <i>Registration standard: Continuing professional development</i> (in effect from 1 June 2016) and the NMBA CPD fact sheet. The Board is reviewing this standard in 2026 — check <a href="https://www.nursingmidwiferyboard.gov.au/Registration-Standards/Continuing-professional-development" target="_blank" rel="noopener">nursingmidwiferyboard.gov.au</a> for any change. You can override the targets in your profile.</p>
+<table class="small" style="margin:8px 0">
+<tr><td>RN or EN</td><td><b>20 h</b></td></tr>
+<tr><td>Midwife</td><td><b>20 h</b></td></tr>
+<tr><td>RN/EN <i>and</i> midwife</td><td><b>40 h</b> (20 + 20)</td></tr>
+<tr><td>Nurse practitioner</td><td><b>30 h</b> (20 + 10 endorsement)</td></tr>
+<tr><td>Midwife practitioner</td><td><b>30 h</b> (20 + 10 endorsement)</td></tr>
+<tr><td>Midwife, scheduled medicines endorsement</td><td><b>30 h</b> (20 + 10)</td></tr>
+<tr><td>Nurse + midwife with scheduled medicines endorsement</td><td><b>50 h</b></td></tr>
+</table>
+<ul class="small" style="padding-left:18px;margin:6px 0">
+<li>The CPD year runs <b>1 June – 31 May</b>; you declare at renewal.</li>
+<li>One hour of active learning = one hour of CPD.</li>
+<li>If dual registered, an activity relevant to both nursing and midwifery can count to both.</li>
+<li>Endorsement hours are <i>additional</i> and must relate to the endorsement (e.g. prescribing, diagnostics, referral).</li>
+<li>Routine annual mandatory training (e.g. CPR, fire) does <b>not</b> count. Mandatory training with genuinely <i>new</i> learning relevant to your practice can.</li>
+<li>Self-directed learning needs references to what you read.</li>
+<li>For each activity record: learning need, action plan, activity type/topics/outcome, reflection on practice, evidence and hours.</li>
+<li>Keep records for <b>5 years</b>. You can be audited at any time and asked for last year's plan and evidence.</li>
+<li>Non-practising registrants don't need CPD. Exemptions exist for exceptional circumstances.</li>
+</ul>`;
+
+/* ---------- free learning directory (curated; verify current details with provider) ---------- */
+const SITES_CHECKED = 'October 2026';
+const SITES = [
+  { id: 's1', cat: 'Safety & quality', name: 'Australian Commission on Safety and Quality in Health Care – eLearning', url: 'https://learn.safetyandquality.gov.au', desc: 'Medication safety, antimicrobial stewardship, sepsis, adverse events and more, with a completion transcript.', tag: 'Free (sign up)' },
+  { id: 'n1', cat: 'Safety & quality', name: 'National Hand Hygiene Initiative & infection prevention eLearning', url: 'https://www.safetyandquality.gov.au/elearning/infection-prevention-and-control-and-hand-hygiene-elearning', desc: 'Basics of infection prevention and control plus advanced IPC modules. (A routine annual hand hygiene refresher on its own doesn\'t count as CPD.)', tag: 'Free (sign up)' },
+  { id: 's2', cat: 'Palliative & end of life', name: 'End-of-Life Essentials', url: 'https://www.endoflifeessentials.com.au', desc: 'Government-funded end-of-life care modules for hospital nurses, doctors and allied health.', tag: 'Free (sign up)' },
+  { id: 's3', cat: 'Palliative & end of life', name: 'ELDAC – End of Life Directions for Aged Care', url: 'https://www.eldac.com.au', desc: 'Palliative care and advance care planning toolkits and webinars, with links to free eLearning.', tag: 'Free' },
+  { id: 's4', cat: 'Palliative & end of life', name: 'PEPA – Program of Experience in the Palliative Approach', url: 'https://pepaeducation.com', desc: 'Free palliative care placements, workshops and eLearning; travel funding may be available.', tag: 'Free (sign up)' },
+  { id: 's5', cat: 'Palliative & end of life', name: 'palliAGED', url: 'https://www.palliaged.com.au', desc: 'Evidence, practice tools and free training for palliative care in aged care.', tag: 'Free' },
+  { id: 's6', cat: 'Aged care & dementia', name: 'Dementia Training Australia', url: 'https://dta.com.au', desc: 'Government-funded online dementia courses for aged care and health staff, with certificates.', tag: 'Free (sign up)' },
+  { id: 's7', cat: 'Clinical', name: 'BloodSafe eLearning Australia', url: 'https://bloodsafelearning.org.au', desc: 'Clinical transfusion practice, patient blood management, iron deficiency and obstetric courses.', tag: 'Free (sign up)' },
+  { id: 's8', cat: 'Clinical', name: 'ASCIA anaphylaxis e-training (health professionals)', url: 'https://traininghp.ascia.org.au', desc: 'Anaphylaxis, food and drug allergy courses for health professionals.', tag: 'Free (sign up)' },
+  { id: 's9', cat: 'Clinical', name: 'eviQ Education', url: 'https://education.eviq.org.au', desc: 'Cancer care and chemotherapy safety eLearning for nurses and ward staff.', tag: 'Free (sign up)' },
+  { id: 'n3', cat: 'Clinical', name: 'Cancer Council – eLearning', url: 'https://www.cancer.org.au/online-resources/elearning', desc: 'Free cancer-related eLearning modules for health professionals.', tag: 'Free (sign up)' },
+  { id: 's10', cat: 'Clinical', name: 'Stroke Foundation – InformMe', url: 'https://informme.org.au', desc: 'Stroke care learning modules, webinars and clinical guidelines.', tag: 'Free (sign up)' },
+  { id: 's11', cat: 'Clinical', name: 'NDSS – online learning for health professionals', url: 'https://www.ndss.com.au/health-professionals/support-services/online-learning/', desc: 'Diabetes learning programs for health professionals.', tag: 'Free modules' },
+  { id: 's12', cat: 'Immunisation & public health', name: 'NCIRS – immunisation education', url: 'https://ncirs.org.au/education', desc: 'Immunisation webinars and learning resources; some in-person courses are paid.', tag: 'Free webinars' },
+  { id: 's13', cat: 'Immunisation & public health', name: 'OpenWHO', url: 'https://openwho.org', desc: 'WHO courses on infection prevention, outbreaks and emergencies.', tag: 'Free (sign up)' },
+  { id: 's14', cat: 'Mental health', name: 'MHPOD – Mental Health Professional Online Development', url: 'https://www.mhpod.gov.au', desc: 'Government-funded mental health eLearning with completion certificates.', tag: 'Free (sign up)' },
+  { id: 's15', cat: 'Midwifery & perinatal', name: 'COPE – perinatal mental health training', url: 'https://www.cope.org.au/health-professionals/cope-online-training-course-information', desc: 'Three free courses (including family violence); other COPE courses are paid.', tag: 'Some free' },
+  { id: 's16', cat: 'Rural & remote', name: 'CRANAplus', url: 'https://crana.org.au', desc: 'Remote and isolated health education; free end-of-life modules, other courses paid.', tag: 'Some free' },
+  { id: 's18', cat: 'Cultural safety', name: 'Australian Indigenous HealthInfoNet', url: 'https://healthinfonet.ecu.edu.au', desc: 'Evidence and resources on Aboriginal and Torres Strait Islander health — log reading as self-directed learning.', tag: 'Free reading' },
+  { id: 's19', cat: 'Professional', name: 'Australian College of Nursing', url: 'https://www.acn.edu.au', desc: 'Many free CPD courses and webinars for ACN members; others paid.', tag: 'Free for members' },
+  { id: 's21', cat: 'Professional', name: 'NMBA – professional standards & codes', url: 'https://www.nursingmidwiferyboard.gov.au/codes-guidelines-statements/professional-standards', desc: 'Codes of conduct and standards for practice — reviewing and reflecting on them can be logged as self-directed learning.', tag: 'Free reading' },
+  { id: 'n2', cat: 'Wellbeing', name: 'Nurse & Midwife Support', url: 'https://www.nmsupport.org.au', desc: '24/7 confidential support line and wellbeing resources for nurses and midwives (support, not CPD).', tag: 'Free support' },
+];
+
+/* ---------- IndexedDB ---------- */
+const DB = {
+  db: null,
+  open() {
+    return new Promise((res, rej) => {
+      const r = indexedDB.open('cpdcompass', 1);
+      r.onupgradeneeded = () => { const d = r.result; d.createObjectStore('kv'); d.createObjectStore('activities', { keyPath: 'id' }); d.createObjectStore('files', { keyPath: 'id' }); };
+      r.onsuccess = () => { this.db = r.result; res(); };
+      r.onerror = () => rej(r.error);
+    });
+  },
+  tx(store, mode, fn) {
+    return new Promise((res, rej) => {
+      const t = this.db.transaction(store, mode); const s = t.objectStore(store); let out; const q = fn(s);
+      if (q) q.onsuccess = () => { out = q.result; };
+      t.oncomplete = () => res(out); t.onerror = () => rej(t.error); t.onabort = () => rej(t.error);
+    });
+  },
+  get(st, k) { return this.tx(st, 'readonly', s => s.get(k)); },
+  put(st, v, k) { return this.tx(st, 'readwrite', s => k !== undefined ? s.put(v, k) : s.put(v)); },
+  del(st, k) { return this.tx(st, 'readwrite', s => s.delete(k)); },
+  all(st) { return this.tx(st, 'readonly', s => s.getAll()); },
+  clear(st) { return this.tx(st, 'readwrite', s => s.clear()); },
+};
+
+/* ---------- state ---------- */
+const S = { profile: null, settings: null, plans: {}, sites: null, acts: [], tab: 'home', year: null, logQ: '', learnCat: 'All', learnQ: '' };
+const defaultProfile = () => ({ name: '', photo: '', headline: '', ahpra: '', state: '', location: '', email: '', phone: '', nurseType: 'RN', midwife: false, endorsement: 'none', context: '', about: '', experience: [], education: [], licences: [], skills: [], languages: [], targets: null, practice: {} });
+const defaultSettings = () => ({ onboarded: false, ai: { provider: 'anthropic', keys: {}, models: {} }, lastBackup: null, theme: 'auto' });
+const save = {
+  profile: () => DB.put('kv', S.profile, 'profile'),
+  settings: () => DB.put('kv', S.settings, 'settings'),
+  plans: () => DB.put('kv', S.plans, 'plans'),
+  sites: () => DB.put('kv', S.sites, 'sites'),
+};
+async function load() {
+  await DB.open();
+  S.profile = Object.assign(defaultProfile(), await DB.get('kv', 'profile') || {});
+  S.settings = Object.assign(defaultSettings(), await DB.get('kv', 'settings') || {});
+  S.settings.ai = Object.assign({ provider: 'anthropic', keys: {}, models: {} }, S.settings.ai || {});
+  S.plans = await DB.get('kv', 'plans') || {};
+  S.sites = await DB.get('kv', 'sites') || { custom: [], hidden: [] };
+  S.acts = await DB.all('activities');
+  S.year = periodFor(new Date()).y;
+  applyTheme();
+  try { if (navigator.storage && navigator.storage.persist) await navigator.storage.persist(); } catch (e) {}
+}
+function applyTheme() { const t = S.settings.theme; if (t === 'auto') document.documentElement.removeAttribute('data-theme'); else document.documentElement.setAttribute('data-theme', t); }
+
+/* ---------- CPD maths ---------- */
+function period(y) { return { y, start: new Date(y, 5, 1), end: new Date(y + 1, 4, 31, 23, 59, 59), label: `${y}–${pad((y + 1) % 100)}` }; }
+function periodFor(d) { d = new Date(d); return period(d.getMonth() >= 5 ? d.getFullYear() : d.getFullYear() - 1); }
+function actsIn(y) { const p = period(y); return S.acts.filter(a => { const d = parseISO(a.date); return d >= p.start && d <= p.end; }).sort((a, b) => b.date.localeCompare(a.date)); }
+function totals(y) { const t = { nursing: 0, midwifery: 0, endorsement: 0 }; actsIn(y).forEach(a => (a.streams || []).forEach(s => { if (s in t) t[s] += Number(a.hours) || 0; })); return t; }
+function reqs() {
+  const p = S.profile, r = {};
+  if (p.nurseType) r.nursing = 20;
+  if (p.midwife) r.midwifery = 20;
+  if (p.endorsement && p.endorsement !== 'none') r.endorsement = 10;
+  if (!Object.keys(r).length) r.nursing = 20;
+  if (p.targets) for (const k in p.targets) if (p.targets[k] !== '' && p.targets[k] != null && !isNaN(p.targets[k])) r[k] = Number(p.targets[k]);
+  return r;
+}
+function regLabel() {
+  const p = S.profile, parts = [];
+  if (p.nurseType === 'RN') parts.push('Registered nurse'); if (p.nurseType === 'EN') parts.push('Enrolled nurse');
+  if (p.midwife) parts.push('Midwife');
+  if (p.endorsement && p.endorsement !== 'none') parts.push(ENDORSEMENTS[p.endorsement]);
+  return parts.join(' · ') || 'Registration not set';
+}
+function myStandards() {
+  const p = S.profile, out = [];
+  if (p.nurseType === 'RN') out.push('RN'); if (p.nurseType === 'EN') out.push('EN');
+  if (p.midwife) out.push('RM'); if (p.endorsement === 'NP') out.push('NP');
+  if (!out.length) out.push('RN');
+  return out;
+}
+function allStandardItems() { return myStandards().flatMap(k => STANDARDS[k].items.map(i => `${k} ${i}`)); }
+function yearsAvailable() {
+  const cur = periodFor(new Date()).y; let min = cur;
+  S.acts.forEach(a => { const y = periodFor(parseISO(a.date)).y; if (y < min) min = y; });
+  Object.keys(S.plans).forEach(y => { if (+y < min) min = +y; });
+  const out = []; for (let y = cur; y >= Math.max(min, cur - 6); y--) out.push(y); return out;
+}
+const daysLeft = y => Math.max(0, Math.ceil((period(y).end - new Date()) / 864e5));
+
+/* ---------- sheets (modal stack) ---------- */
+const sheets = [];
+function openSheet({ title, body, foot = '', onMount, wide }) {
+  const w = document.createElement('div'); w.className = 'sheet-wrap';
+  w.innerHTML = `<div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(title)}"><div class="sheet-h"><h3>${esc(title)}</h3><button class="icon-btn" data-act="closeSheet" aria-label="Close">${I.x}</button></div><div class="sheet-b">${body}</div>${foot ? `<div class="sheet-f">${foot}</div>` : ''}</div>`;
+  w.addEventListener('click', e => { if (e.target === w) closeSheet(); });
+  document.body.appendChild(w); sheets.push(w);
+  document.body.style.overflow = 'hidden';
+  if (onMount) onMount(w);
+  return w;
+}
+function closeSheet() { const w = sheets.pop(); if (w) { if (w._onClose) w._onClose(); w.remove(); } if (!sheets.length) document.body.style.overflow = ''; }
+function topSheet() { return sheets[sheets.length - 1]; }
+function confirmBox(msg, okLabel = 'Confirm', danger = false) {
+  return new Promise(res => {
+    const w = openSheet({ title: 'Please confirm', body: `<p>${msg}</p>`, foot: `<button class="btn sec" style="flex:1" id="cfNo">Cancel</button><button class="btn ${danger ? 'danger' : ''}" style="flex:1" id="cfYes">${esc(okLabel)}</button>` });
+    w._onClose = () => res(false);
+    $('#cfNo', w).onclick = () => closeSheet();
+    $('#cfYes', w).onclick = () => { w._onClose = null; closeSheet(); res(true); };
+  });
+}
+
+/* ---------- file picking & certificate scanning ---------- */
+let pickCb = null;
+function pick(kind, cb) { pickCb = cb; const el = kind === 'cam' ? $('#inCam') : kind === 'photo' ? $('#inPhoto') : kind === 'backup' ? $('#inBackup') : $('#inFile'); el.value = ''; el.click(); }
+['inCam', 'inFile', 'inPhoto', 'inBackup'].forEach(id => document.getElementById(id).addEventListener('change', e => { const fs = [...(e.target.files || [])]; if (fs.length && pickCb) { const cb = pickCb; pickCb = null; cb(id === 'inFile' ? fs : fs[0]); } }));
+/* compress a photo to JPEG (no editor) — used for multi-file uploads */
+async function compressImage(file, max = 2000) {
+  const url = URL.createObjectURL(file);
+  try { const img = await loadImage(url); const s = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas'); c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height); const blob = await new Promise(r => c.toBlob(r, 'image/jpeg', .85)); return { blob, name: file.name.replace(/\.\w+$/, '') + '.jpg', type: 'image/jpeg' }; }
+  catch (e) { return { blob: file, name: file.name, type: file.type }; } finally { URL.revokeObjectURL(url); }
+}
+/* in-app evidence viewer (window.open on blob URLs fails in iOS home-screen apps) */
+function viewFile(blob, name, type) {
+  const u = URL.createObjectURL(blob);
+  const w = openSheet({ title: name || 'Evidence', body: type.startsWith('image/') ? `<img src="${u}" alt="" style="width:100%;border-radius:12px;margin-top:10px;background:#fff">` : `<iframe src="${u}" title="${esc(name)}" style="width:100%;height:65vh;border:1px solid var(--line);border-radius:12px;margin-top:10px;background:#fff"></iframe><p class="hint">If the PDF doesn't display, use Share / save to open it in another app.</p>`, foot: `<button class="btn block" id="vfShare">Share / save</button>` });
+  w._onClose = () => URL.revokeObjectURL(u);
+  $('#vfShare', w).onclick = () => deliver(name || 'evidence', blob);
+}
+
+function loadImage(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+async function resizeToDataURL(file, max = 400, q = .85) {
+  const url = URL.createObjectURL(file); const img = await loadImage(url); URL.revokeObjectURL(url);
+  const s = Math.min(1, max / Math.max(img.width, img.height)); const c = document.createElement('canvas');
+  c.width = Math.round(img.width * s); c.height = Math.round(img.height * s); c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', q);
+}
+/* Scan editor: rotate + "document" enhance (greyscale + auto-levels), compress to JPEG. Resolves {blob,name,type} or null */
+function scanEditor(file) {
+  return new Promise(async resolve => {
+    if (file.type === 'application/pdf') return resolve({ blob: file, name: file.name, type: file.type });
+    let img; const url = URL.createObjectURL(file);
+    try { img = await loadImage(url); } catch (e) { toast('Could not open that image'); return resolve(null); }
+    let rot = 0, enh = true, done = false;
+    const w = openSheet({
+      title: 'Scan certificate',
+      body: `<canvas class="scan" id="scCan"></canvas><div class="row" style="margin-top:12px"><button class="btn sec" id="scRot">↻ Rotate</button><button class="btn sec" id="scEnh">Document mode: on</button></div><p class="hint">Tip: lay the certificate flat in good light and fill the frame. Document mode boosts contrast so it reads like a scan.</p>`,
+      foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="scUse">Use this scan</button>`,
+    });
+    w._onClose = () => { URL.revokeObjectURL(url); if (!done) resolve(null); };
+    const cv = $('#scCan', w), ctx = cv.getContext('2d', { willReadFrequently: true });
+    const draw = () => {
+      const max = 2000, s = Math.min(1, max / Math.max(img.width, img.height));
+      const iw = Math.round(img.width * s), ih = Math.round(img.height * s);
+      const side = rot % 180 !== 0; cv.width = side ? ih : iw; cv.height = side ? iw : ih;
+      ctx.save(); ctx.translate(cv.width / 2, cv.height / 2); ctx.rotate(rot * Math.PI / 180); ctx.drawImage(img, -iw / 2, -ih / 2, iw, ih); ctx.restore();
+      if (enh) {
+        const d = ctx.getImageData(0, 0, cv.width, cv.height), p = d.data, hist = new Uint32Array(256);
+        for (let i = 0; i < p.length; i += 4) { const l = (p[i] * 299 + p[i + 1] * 587 + p[i + 2] * 114) / 1000 | 0; p[i] = l; hist[l]++; }
+        const n = p.length / 4; let acc = 0, lo = 0, hi = 255;
+        for (let i = 0; i < 256; i++) { acc += hist[i]; if (acc > n * .02) { lo = i; break; } }
+        acc = 0; for (let i = 255; i >= 0; i--) { acc += hist[i]; if (acc > n * .08) { hi = i; break; } }
+        if (hi - lo < 40) { lo = 0; hi = 255; } const rng = Math.max(1, hi - lo);
+        for (let i = 0; i < p.length; i += 4) { let v = (p[i] - lo) * 255 / rng; v = v < 0 ? 0 : v > 255 ? 255 : v; v = 255 * Math.pow(v / 255, 1.25); p[i] = p[i + 1] = p[i + 2] = v; }
+        ctx.putImageData(d, 0, 0);
+      }
+    };
+    draw();
+    $('#scRot', w).onclick = () => { rot = (rot + 90) % 360; draw(); };
+    $('#scEnh', w).onclick = e => { enh = !enh; e.target.textContent = 'Document mode: ' + (enh ? 'on' : 'off'); draw(); };
+    $('#scUse', w).onclick = () => cv.toBlob(b => { done = true; closeSheet(); resolve({ blob: b, name: `certificate-${iso(new Date())}.jpg`, type: 'image/jpeg' }); }, 'image/jpeg', .85);
+  });
+}
+
+/* ---------- AI (bring your own key) ---------- */
+const AI_DEF = {
+  anthropic: { label: 'Claude (Anthropic)', model: 'claude-sonnet-4-5', hint: 'sk-ant-…', url: 'https://console.anthropic.com/settings/keys' },
+  openai: { label: 'ChatGPT (OpenAI)', model: 'gpt-4.1-mini', hint: 'sk-…', url: 'https://platform.openai.com/api-keys' },
+  gemini: { label: 'Gemini (Google)', model: 'gemini-2.5-flash', hint: 'AIza…', url: 'https://aistudio.google.com/apikey' },
+};
+const AI_SYS = `You are the CPD assistant inside "CPD Compass", a free app for Australian registered nurses, enrolled nurses, midwives and nurse/midwife practitioners.
+Base all CPD guidance on the Nursing and Midwifery Board of Australia (NMBA) Registration standard: Continuing professional development (in effect from 1 June 2016; under review in 2026). Key rules: 20 hours per CPD year (1 June–31 May) for nursing; 20 for midwifery; 40 if dual registered (an activity relevant to both may count to both); nurse/midwife practitioners and scheduled-medicines-endorsed midwives need 10 additional hours related to the endorsement. One hour of active learning = one hour CPD. Routine annual mandatory training (CPR, fire) does not count; mandatory training with new learning can. Records need: learning need, action plan, activity type/topics/outcome, reflection on practice, evidence, hours. Keep records 5 years. Map learning to the relevant NMBA Standards for Practice.
+Write in Australian English. Be concise and practical. Never invent hours, dates, providers or certificates. Where a detail is unknown, use [square brackets] for the user to fill in. You give guidance, not official regulatory advice — point to the NMBA for definitive answers.`;
+function aiCfg() { const a = S.settings.ai; return { provider: a.provider, key: (a.keys[a.provider] || '').trim(), model: (a.models[a.provider] || '').trim() || AI_DEF[a.provider].model }; }
+const aiReady = () => !!aiCfg().key;
+/* history: [{role:'user'|'assistant', text}] ; image: {mime, b64} attached to the last user turn */
+async function aiAsk(prompt, { system = AI_SYS, image = null, history = [], max = 1400 } = {}) {
+  const { provider, key, model } = aiCfg();
+  if (!key) throw new Error('Add your AI key in Settings first.');
+  const turns = [...history, { role: 'user', text: prompt }];
+  let res, data;
+  if (provider === 'anthropic') {
+    const messages = turns.map((t, i) => {
+      if (i === turns.length - 1 && image) return { role: 'user', content: [{ type: 'image', source: { type: 'base64', media_type: image.mime, data: image.b64 } }, { type: 'text', text: t.text }] };
+      return { role: t.role, content: t.text };
+    });
+    res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'content-type': 'application/json', 'x-api-key': key, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model, max_tokens: max, system, messages }) });
+    data = await res.json();
+    if (!res.ok) throw new Error(data?.error?.message || ('HTTP ' + res.status));
+    return (data.content || []).filter(c => c.type === 'text').map(c => c.text).join('\n').trim();
+  }
+  if (provider === 'openai') {
+    const messages = [{ role: 'system', content: system }, ...turns.map((t, i) => {
+      if (i === turns.length - 1 && image) return { role: 'user', content: [{ type: 'text', text: t.text }, { type: 'image_url', image_url: { url: `data:${image.mime};base64,${image.b64}` } }] };
+      return { role: t.role, content: t.text };
+    })];
+    res = await fetch('https://api.openai.com/v1/chat/completions', { method: 'POST', headers: { 'content-type': 'application/json', authorization: 'Bearer ' + key }, body: JSON.stringify({ model, messages, max_completion_tokens: max }) });
+    data = await res.json();
+    if (!res.ok) throw new Error(data?.error?.message || ('HTTP ' + res.status));
+    return (data.choices?.[0]?.message?.content || '').trim();
+  }
+  if (provider === 'gemini') {
+    const contents = turns.map((t, i) => {
+      const parts = [{ text: t.text }];
+      if (i === turns.length - 1 && image) parts.unshift({ inline_data: { mime_type: image.mime, data: image.b64 } });
+      return { role: t.role === 'assistant' ? 'model' : 'user', parts };
+    });
+    res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, { method: 'POST', headers: { 'content-type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify({ systemInstruction: { parts: [{ text: system }] }, contents, generationConfig: { maxOutputTokens: max } }) });
+    data = await res.json();
+    if (!res.ok) throw new Error(data?.error?.message || ('HTTP ' + res.status));
+    return (data.candidates?.[0]?.content?.parts || []).map(p => p.text || '').join('').trim();
+  }
+  throw new Error('Unknown AI provider');
+}
+function parseJSON(txt) {
+  const m = txt.match(/```(?:json)?\s*([\s\S]*?)```/); const s = m ? m[1] : txt;
+  const a = s.indexOf('['), o = s.indexOf('{');
+  const start = a !== -1 && (o === -1 || a < o) ? a : o; if (start === -1) throw new Error('No JSON in reply');
+  const end = Math.max(s.lastIndexOf(']'), s.lastIndexOf('}'));
+  return JSON.parse(s.slice(start, end + 1));
+}
+function noAI() {
+  openSheet({ title: 'AI assistant', body: `<p>CPD Compass can use <b>your own</b> Claude, ChatGPT or Gemini API key to draft reflections, read certificates, suggest learning needs and polish your profile.</p><p class="muted small">Your key is stored only on this device and sent only to the AI provider you choose. Usage is billed by that provider to your account.</p>`, foot: `<button class="btn block" data-act="openSettings">Add my AI key</button>` });
+}
+async function withBusy(btn, fn) { const old = btn.innerHTML; btn.disabled = true; btn.innerHTML = '<span class="spin"></span> Working…'; try { return await fn(); } catch (e) { toast(e.message || 'Something went wrong', 4000); } finally { btn.disabled = false; btn.innerHTML = old; } }
+function cpdContext() {
+  const y = S.year, r = reqs(), t = totals(y), p = S.profile;
+  const plan = S.plans[y]?.needs || [];
+  return `My profile: ${p.name || '[name]'}; ${regLabel()}; state ${p.state || '-'}; context of practice: ${p.context || p.headline || 'not given'}.
+CPD year ${period(y).label} (ends 31 May ${y + 1}, ${daysLeft(y)} days left). Hours: ${Object.keys(r).map(k => `${STREAMS[k].label} ${fmtH(t[k])}/${r[k]}`).join(', ')}.
+Learning needs in plan: ${plan.map(n => n.need).join('; ') || 'none yet'}.
+Recent activities: ${actsIn(y).slice(0, 8).map(a => `${a.title} (${fmtH(a.hours)}h)`).join('; ') || 'none yet'}.`;
+}
+
+/* ---------- download / share ---------- */
+async function deliver(name, blob) {
+  const f = new File([blob], name, { type: blob.type });
+  if (navigator.canShare && navigator.canShare({ files: [f] }) && /iphone|ipad|android/i.test(navigator.userAgent)) {
+    try { await navigator.share({ files: [f], title: name }); return; } catch (e) { if (e.name === 'AbortError') return; }
+  }
+  const u = URL.createObjectURL(blob), a = document.createElement('a'); a.href = u; a.download = name; document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(u), 4000);
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const TABS = [['home', 'Home', I.home], ['log', 'CPD log', I.log], ['plan', 'Plan', I.plan], ['learn', 'Free learning', I.learn], ['profile', 'Profile', I.user]];
+function shell() {
+  $('#app').innerHTML = `
+  <header class="top"><div class="wrap"><div class="logo">${BRAND.mark}</div><h1 id="hTitle"></h1>
+    <button class="icon-btn" data-act="openAI" aria-label="AI assistant">${I.spark}</button>
+    <button class="icon-btn" data-act="openSettings" aria-label="Settings">${I.gear}</button></div></header>
+  <main><div class="wrap" id="view"></div></main>
+  <button class="fab" data-act="newAct" aria-label="Log CPD activity">${I.plus}</button>
+  <nav class="tabs"><div class="wrap">${TABS.map(([k, l, ic]) => `<button data-act="tab" data-tab="${k}" aria-label="${l}">${ic}<span>${l}</span></button>`).join('')}</div></nav>`;
+}
+function render() {
+  if (!S.settings.onboarded) return renderOnboarding();
+  if (!$('#hTitle')) shell();
+  $('#hTitle').innerHTML = { home: '<span class="wm">CPD <b>Compass</b></span>', log: 'CPD log', plan: 'Learning plan', learn: 'Free learning', profile: 'Profile' }[S.tab];
+  $$('nav.tabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === S.tab));
+  $('.fab').style.display = ['home', 'log'].includes(S.tab) ? '' : 'none';
+  $('#view').innerHTML = VIEWS[S.tab]();
+  if (S.tab === 'log') bindLogSearch();
+  if (S.tab === 'learn') bindLearnSearch();
+}
+function yearPicker() {
+  const ys = yearsAvailable(); if (ys.length < 2) return '';
+  return `<div class="scroller" style="margin-bottom:8px">${ys.map(y => `<button class="chip ${y === S.year ? 'on' : ''}" data-act="setYear" data-y="${y}">CPD year ${period(y).label}</button>`).join('')}</div>`;
+}
+function ringSVG(done, need, color) {
+  const pct = need ? Math.min(1, done / need) : 0, R = 46, C = 2 * Math.PI * R;
+  return `<svg viewBox="0 0 110 110" role="img" aria-label="${fmtH(done)} of ${need} hours"><circle cx="55" cy="55" r="${R}" fill="none" stroke="var(--card2)" stroke-width="11"/><circle cx="55" cy="55" r="${R}" fill="none" stroke="${pct >= 1 ? 'var(--ok)' : color}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${C * pct} ${C}" transform="rotate(-90 55 55)" opacity="${pct > 0 ? 1 : 0}"/><text x="55" y="53" text-anchor="middle" font-size="22" font-weight="800" fill="var(--text)">${fmtH(done)}</text><text x="55" y="72" text-anchor="middle" font-size="12" fill="var(--muted)">of ${need} h</text></svg>`;
+}
+function actItem(a) {
+  const ev = (a.files || []).length, refl = (a.reflection || '').trim().length > 20;
+  return `<div class="item tap" data-act="editAct" data-id="${a.id}"><div class="main"><div class="ttl">${esc(a.title || 'Untitled activity')}</div><div class="meta">${fmtDate(a.date)}${a.provider ? ' · ' + esc(a.provider) : ''}</div>
+  <div class="chips" style="margin-top:6px">${(a.streams || []).map(s => `<span class="chip" style="color:${STREAMS[s].color}">${STREAMS[s].short}</span>`).join('')}${ev ? `<span class="chip ok">${ev} evidence</span>` : '<span class="chip warn">No evidence</span>'}${refl ? '' : '<span class="chip warn">No reflection</span>'}</div></div><div class="hrs">${fmtH(a.hours)} h</div></div>`;
+}
+
+const VIEWS = {
+  home() {
+    const y = S.year, p = period(y), r = reqs(), t = totals(y), acts = actsIn(y), dl = daysLeft(y);
+    const isCur = y === periodFor(new Date()).y;
+    const totalNeed = Object.values(r).reduce((a, b) => a + b, 0);
+    const totalDone = Object.keys(r).reduce((a, k) => a + Math.min(t[k], r[k]), 0);
+    const remain = Math.max(0, totalNeed - totalDone);
+    const months = Math.max(1, dl / 30.4);
+    const plan = S.plans[y] || {};
+    const noEv = acts.filter(a => !(a.files || []).length).length, noRef = acts.filter(a => (a.reflection || '').trim().length <= 20).length;
+    const lastB = S.settings.lastBackup ? Math.floor((Date.now() - S.settings.lastBackup) / 864e5) : null;
+    const soon = (S.profile.licences || []).filter(l => l.expiry).map(l => ({ ...l, d: Math.ceil((parseISO(l.expiry) - new Date()) / 864e5) })).filter(l => l.d <= 60).sort((a, b) => a.d - b.d);
+    const checks = [
+      [!!(plan.needs || []).length, 'Learning plan with identified needs', 'plan'],
+      [acts.length > 0 && noRef === 0, acts.length ? (noRef ? `${plural(noRef, 'activity')} missing a reflection` : 'Every activity has a reflection') : 'Reflections on each activity', 'log'],
+      [acts.length > 0 && noEv === 0, acts.length ? (noEv ? `${plural(noEv, 'activity')} missing evidence` : 'Evidence attached to every activity') : 'Evidence (certificates, notes, references)', 'log'],
+      [remain === 0, remain === 0 ? 'Minimum hours met' : `${fmtH(remain)} hours still to go`, 'log'],
+    ];
+    return `${yearPicker()}
+    <div class="card hero">
+      <div class="lbl">${isCur ? 'Days until CPD year ends' : 'CPD year'} · ${p.label}</div>
+      <div class="big" style="margin:6px 0">${isCur ? dl : (remain === 0 ? 'Complete' : fmtH(remain) + ' h short')}</div>
+      <div class="lbl">${isCur ? `Ends 31 May ${y + 1} — declare at renewal. ` : ''}${remain === 0 ? 'You have met the minimum hours. 🎉' : isCur ? `About <b>${fmtH(Math.ceil(remain / months * 4) / 4)} h/month</b> keeps you on track.` : ''}</div>
+    </div>
+    ${thanksCard(y, remain === 0)}
+    <div class="card"><h2>Hours this CPD year<span class="sp"></span><span class="chip">${regLabel()}</span></h2>
+      <div class="rings">${Object.keys(r).map(k => `<div class="ring">${ringSVG(t[k], r[k], STREAMS[k].color)}<div class="t">${STREAMS[k].label}</div><div class="s">${t[k] >= r[k] ? 'Met' : fmtH(r[k] - t[k]) + ' h to go'}</div></div>`).join('')}</div>
+    </div>
+    <div class="qa">
+      <button data-act="newAct">${I.plus.replace('width="26" height="26"', '')}<span>Log CPD</span></button>
+      <button data-act="scanNew">${I.cam}<span>Scan cert</span></button>
+      <button data-act="tab" data-tab="learn">${I.learn}<span>Free CPD</span></button>
+      <button data-act="timer">${I.clock}<span>${S.settings.timer ? 'Timer on' : 'Study timer'}</span></button>
+    </div>
+    ${S.settings.timer ? `<div class="card" style="margin-top:12px;border-color:var(--brand)"><h2>⏱ Learning in progress<span class="sp"></span><b id="tmrEl">${fmtElapsed(Date.now() - S.settings.timer.start)}</b></h2><div class="small muted">Started ${new Date(S.settings.timer.start).toLocaleTimeString('en-AU', { hour: 'numeric', minute: '2-digit' })}${S.settings.timer.title ? ' · ' + esc(S.settings.timer.title) : ''}. Keeps running if you close the app.</div><div class="row" style="margin-top:10px"><button class="btn sec sm" data-act="timerCancel">Discard</button><button class="btn sm" data-act="timerStop">Stop &amp; log</button></div></div>` : ''}
+    ${recencyCard()}
+    ${soon.length ? `<div class="card" style="margin-top:12px"><h2>Licences &amp; certifications expiring</h2>${soon.map(l => `<div class="item"><div class="main"><div class="ttl">${esc(l.name)}</div><div class="meta">${esc(l.issuer || '')}</div></div><span class="chip ${l.d < 0 ? 'warn' : ''}">${l.d < 0 ? 'Expired' : l.d === 0 ? 'Today' : 'in ' + plural(l.d, 'day')}</span></div>`).join('')}</div>` : ''}
+    <div class="card" style="margin-top:12px"><h2>Audit-ready checklist</h2>
+      ${checks.map(([ok, txt, tab]) => `<div class="check tap" data-act="tab" data-tab="${tab}"><span class="dot ${ok ? 'y' : 'n'}">${ok ? '✓' : '!'}</span><div style="flex:1">${txt}</div></div>`).join('')}
+      <div class="check"><span class="dot ${lastB !== null && lastB < 31 ? 'y' : 'n'}">${lastB !== null && lastB < 31 ? '✓' : '!'}</span><div style="flex:1">${lastB === null ? 'Not backed up yet — your records live only on this device.' : `Last backup ${lastB === 0 ? 'today' : plural(lastB, 'day') + ' ago'}.`} <button class="btn ghost sm" data-act="backup">Back up now</button></div></div>
+    </div>
+    <div class="sec-title">Recent activity</div>
+    <div class="card">${acts.length ? acts.slice(0, 5).map(actItem).join('') : `<div class="empty">No CPD logged for ${p.label} yet.<br><button class="btn" style="margin-top:12px" data-act="newAct">Log your first activity</button></div>`}</div>`;
+  },
+
+  log() {
+    const y = S.year, q = S.logQ.toLowerCase(), all = actsIn(y);
+    const acts = q ? all.filter(a => [a.title, a.provider, a.type, a.topics, a.reflection].join(' ').toLowerCase().includes(q)) : all;
+    const r = reqs(), t = totals(y);
+    return `${yearPicker()}
+    <div class="card"><div class="row" style="align-items:center"><div><div class="muted small">CPD year ${period(y).label}</div><div style="font-size:22px;font-weight:800">${plural(all.length, 'activity')}</div></div>
+      <div style="text-align:right">${Object.keys(r).map(k => `<div class="small"><b style="color:${STREAMS[k].color}">${fmtH(t[k])}</b> / ${r[k]} h ${STREAMS[k].short.toLowerCase()}</div>`).join('')}</div></div>
+      <div class="row" style="margin-top:12px"><button class="btn sec sm" data-act="printPortfolio">Print / PDF portfolio</button><button class="btn sec sm" data-act="exportCSV">Export CSV</button></div></div>
+    <div class="search">${I.search}<input id="logQ" type="search" placeholder="Search activities" value="${esc(S.logQ)}"></div>
+    <div class="card" id="logList">${acts.length ? acts.map(actItem).join('') : `<div class="empty">${q ? 'No matches.' : 'Nothing logged in this CPD year yet.'}</div>`}</div>`;
+  },
+
+  plan() {
+    const y = S.year, pl = S.plans[y] || { self: {}, needs: [] }, acts = actsIn(y);
+    const stds = myStandards();
+    const rating = { '': '—', c: 'Confident', d: 'Developing', p: 'Priority' };
+    return `${yearPicker()}
+    <div class="card callout info" style="margin:0 0 12px;border:0">The NMBA expects a CPD cycle: <b>reflect</b> on your practice against the standards → <b>identify &amp; prioritise</b> learning needs → <b>plan</b> → <b>do</b> the learning → <b>reflect</b> on the impact. You may be asked for this plan at audit.</div>
+    <div class="sec-title">1 · Self-assessment against the standards</div>
+    ${stds.map(k => `<div class="card"><h2>${STANDARDS[k].title}</h2>${STANDARDS[k].items.map((it, i) => { const key = k + i, v = (pl.self || {})[key] || ''; return `<div class="item" style="align-items:center"><div class="main small">${esc(it)}</div><select data-self="${key}" style="width:auto;padding:7px 8px;font-size:14px">${Object.entries(rating).map(([rv, rl]) => `<option value="${rv}" ${rv === v ? 'selected' : ''}>${rl}</option>`).join('')}</select></div>`; }).join('')}</div>`).join('')}
+    <div class="sec-title" style="display:flex;align-items:center">2 · Learning needs &amp; action plan<span style="flex:1"></span><button class="btn ghost sm" data-act="aiNeeds">${I.spark} Suggest</button></div>
+    <div class="card">${(pl.needs || []).length ? pl.needs.map(n => { const c = acts.filter(a => a.needId === n.id), h = c.reduce((s, a) => s + (+a.hours || 0), 0); return `<div class="item tap" data-act="editNeed" data-id="${n.id}"><div class="main"><div class="ttl">${esc(n.need)}</div><div class="meta">${esc(n.standard || '')}</div>${n.actions ? `<div class="small" style="margin-top:4px">Plan: ${esc(n.actions)}</div>` : ''}<div class="chips" style="margin-top:6px"><span class="chip ${n.status === 'Achieved' ? 'ok' : ''}">${esc(n.status || 'Planned')}</span>${n.target ? `<span class="chip">By ${fmtDate(n.target)}</span>` : ''}<span class="chip">${plural(c.length, 'activity')} · ${fmtH(h)} h</span></div></div></div>`; }).join('') : '<div class="empty">No learning needs yet. Add 2–4 based on your self-assessment, workplace changes, feedback or incidents.</div>'}
+      <button class="btn sec block" style="margin-top:10px" data-act="editNeed">+ Add learning need</button></div>
+    <div class="sec-title">3 · Do &amp; 4 · Reflect</div>
+    <div class="card small">Link each activity you log to a learning need, and write a short reflection on how it changes your practice. ${acts.length ? `This year: <b>${plural(acts.length, 'activity')}</b>, ${acts.filter(a => a.needId).length} linked to your plan.` : ''}</div>`;
+  },
+
+  learn() {
+    const hidden = new Set(S.sites.hidden || []);
+    const all = [...SITES.filter(s => !hidden.has(s.id)), ...(S.sites.custom || []).map(s => ({ ...s, mine: true }))];
+    const cats = ['All', ...new Set(all.map(s => s.cat))];
+    const q = S.learnQ.toLowerCase();
+    const list = all.filter(s => (S.learnCat === 'All' || s.cat === S.learnCat) && (!q || (s.name + s.desc + s.cat).toLowerCase().includes(q)));
+    return `<div class="search">${I.search}<input id="learnQ" type="search" placeholder="Search free learning" value="${esc(S.learnQ)}"></div>
+    <div class="scroller" style="margin-bottom:8px">${cats.map(c => `<button class="chip ${c === S.learnCat ? 'on' : ''}" data-act="learnCat" data-c="${esc(c)}">${esc(c)}</button>`).join('')}</div>
+    <div id="learnList">${list.map(s => `<div class="card"><div class="row" style="align-items:flex-start"><div><div class="ttl" style="font-weight:700">${esc(s.name)}</div><div class="meta small muted">${esc(s.cat)}</div></div><span class="chip ok" style="flex:none">${esc(s.tag || 'Free')}</span></div>
+      <p class="small" style="margin:8px 0 10px">${esc(s.desc || '')}</p>
+      <div class="row"><a class="btn sec sm" href="${esc(s.url)}" target="_blank" rel="noopener">${I.ext} Open</a><button class="btn sm" data-act="logFromSite" data-id="${esc(s.id)}">Log completed</button></div>
+      <div style="text-align:right;margin-top:4px">${s.mine ? `<button class="btn ghost sm" data-act="delSite" data-id="${esc(s.id)}">Remove</button>` : `<button class="btn ghost sm" data-act="hideSite" data-id="${esc(s.id)}">Hide</button>`}</div></div>`).join('') || '<div class="empty">No matches.</div>'}</div>
+    <button class="btn sec block" data-act="addSite">+ Add a learning site</button>
+    ${hidden.size ? `<button class="btn ghost block" data-act="unhideSites">Show ${hidden.size} hidden</button>` : ''}
+    <p class="hint" style="margin-top:12px">List last checked ${SITES_CHECKED}. Providers change their offerings — check cost, certificate and access details on the provider's site. CPD Compass isn't affiliated with any provider listed.</p>`;
+  },
+
+  profile() {
+    const p = S.profile, initials = (p.name || '?').split(/\s+/).map(w => w[0]).slice(0, 2).join('').toUpperCase();
+    const sec = (title, act, inner, addAct) => `<div class="card"><h2>${title}<span class="sp"></span>${addAct ? `<button class="edit" data-act="${addAct}" aria-label="Add">${I.plus.replace('width="26" height="26"', 'width="20" height="20"')}</button>` : ''}${act ? `<button class="edit" data-act="${act}" aria-label="Edit">${I.pen}</button>` : ''}</h2>${inner}</div>`;
+    const dateRange = e => `${e.start ? fmtMonth(e.start) : ''}${e.start ? ' – ' : ''}${e.current ? 'Present' : e.end ? fmtMonth(e.end) : ''}`;
+    return `<div class="card" style="padding-top:16px">
+      <div class="pf-banner"></div>
+      <div style="display:flex;align-items:flex-end;gap:10px"><div class="pf-photo tap" data-act="editBasics">${p.photo ? `<img src="${p.photo}" alt="">` : initials}</div><span style="flex:1"></span><button class="edit" data-act="editBasics" aria-label="Edit">${I.pen}</button></div>
+      <div class="pf-name">${esc(p.name || 'Your name')}</div>
+      <div>${esc(p.headline || 'Add a headline, e.g. “Registered Nurse · Emergency · Sydney”')}</div>
+      <div class="muted small" style="margin-top:4px">${[p.location, p.state].filter(Boolean).map(esc).join(', ')}</div>
+      <div class="chips" style="margin-top:10px"><span class="chip">${regLabel()}</span>${p.ahpra ? `<span class="chip">AHPRA ${esc(p.ahpra)}</span>` : ''}</div>
+      <div class="row" style="margin-top:14px"><button class="btn sm" data-act="printResume">Print / PDF resume</button><button class="btn sec sm" data-act="editBasics">Edit details</button></div>
+    </div>
+    ${sec('About', 'editAbout', p.about ? `<p style="white-space:pre-wrap;margin:0">${esc(p.about)}</p>` : '<p class="muted" style="margin:0">A short summary of your nursing career, strengths and interests.</p>')}
+    ${sec('Context of practice', 'editBasics', `<p style="margin:0">${esc(p.context) || '<span class="muted">Where and how you practise — this shapes what CPD is relevant to you.</span>'}</p>`)}
+    ${sec('Experience', '', (p.experience || []).length ? p.experience.map(e => `<div class="item tap" data-act="editExp" data-id="${e.id}"><div class="main"><div class="ttl">${esc(e.role)}</div><div>${esc(e.org)}</div><div class="meta">${dateRange(e)}${e.location ? ' · ' + esc(e.location) : ''}</div>${e.desc ? `<div class="small" style="margin-top:4px;white-space:pre-wrap">${esc(e.desc)}</div>` : ''}</div></div>`).join('') : '<p class="muted" style="margin:0">Add your roles, wards and units.</p>', 'editExp')}
+    ${sec('Education', '', (p.education || []).length ? p.education.map(e => `<div class="item tap" data-act="editEdu" data-id="${e.id}"><div class="main"><div class="ttl">${esc(e.qual)}</div><div>${esc(e.inst)}</div><div class="meta">${esc(e.year || '')}</div></div></div>`).join('') : '<p class="muted" style="margin:0">Degrees, diplomas, postgraduate certificates.</p>', 'editEdu')}
+    ${sec('Licences & certifications', '', (p.licences || []).length ? p.licences.map(e => `<div class="item tap" data-act="editLic" data-id="${e.id}"><div class="main"><div class="ttl">${esc(e.name)}</div><div class="meta">${esc(e.issuer || '')}${e.expiry ? ' · expires ' + fmtDate(e.expiry) : ''}</div></div></div>`).join('') : '<p class="muted" style="margin:0">e.g. ALS, PALS, immunisation, IV cannulation — add expiry dates for reminders.</p>', 'editLic')}
+    ${sec('Recency of practice', 'editPractice', Object.keys(p.practice || {}).length ? Object.entries(recencyTotals()).map(([k, v]) => `<div>${STREAMS[k].label}: <b>${Math.round(v).toLocaleString('en-AU')} h</b> in the last 5 years <span class="chip ${v >= RECENCY_REQ ? 'ok' : 'warn'}">${v >= RECENCY_REQ ? 'Meets 450 h' : 'Below 450 h'}</span></div>`).join('') : '<p class="muted" style="margin:0">Hours of practice per year — you need 450 h in the past 5 years.</p>')}
+    ${sec('Skills', 'editSkills', (p.skills || []).length ? `<div class="chips">${p.skills.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div>` : '<p class="muted" style="margin:0">Clinical and professional skills.</p>')}
+    ${sec('Languages', 'editSkills', (p.languages || []).length ? `<div class="chips">${p.languages.map(s => `<span class="chip">${esc(s)}</span>`).join('')}</div>` : '<p class="muted" style="margin:0">Languages you speak.</p>')}`;
+  },
+};
+const fmtElapsed = ms => { const m = Math.floor(ms / 60000), h = Math.floor(m / 60); return h ? `${h} h ${pad(m % 60)} m` : `${m} min`; };
+setInterval(() => { const el = $('#tmrEl'); if (el && S.settings.timer) el.textContent = fmtElapsed(Date.now() - S.settings.timer.start); }, 15000);
+
+/* ---------- recency of practice: 450 h in the preceding 5 years, per profession ---------- */
+const RECENCY_REQ = 450;
+function recencyProfs() { const p = S.profile, o = []; if (p.nurseType) o.push('nursing'); if (p.midwife) o.push('midwifery'); return o.length ? o : ['nursing']; }
+function recencyTotals() { const cur = periodFor(new Date()).y, pr = S.profile.practice || {}, t = {}; recencyProfs().forEach(k => { t[k] = 0; for (let y = cur - 4; y <= cur; y++) t[k] += Number(pr[y]?.[k]) || 0; }); return t; }
+function recencyCard() {
+  const pr = S.profile.practice || {};
+  if (!Object.keys(pr).length) return `<div class="card" style="margin-top:12px"><h2>Recency of practice</h2><p class="small" style="margin:0 0 10px">At renewal you also declare at least <b>${RECENCY_REQ} hours of practice in the past 5 years</b>${recencyProfs().length > 1 ? ' for each profession' : ''}. Track it here too.</p><button class="btn sec sm" data-act="editPractice">Add practice hours</button></div>`;
+  const t = recencyTotals();
+  return `<div class="card tap" style="margin-top:12px" data-act="editPractice"><h2>Recency of practice<span class="sp"></span><span class="small muted">last 5 years</span></h2>${Object.keys(t).map(k => `<div class="small" style="display:flex;justify-content:space-between;margin-top:6px"><span>${STREAMS[k].label}</span><b>${Math.round(t[k]).toLocaleString('en-AU')} / ${RECENCY_REQ} h ${t[k] >= RECENCY_REQ ? '✓' : ''}</b></div><div class="bar" style="margin-top:4px"><i style="width:${Math.min(100, t[k] / RECENCY_REQ * 100)}%;background:${t[k] >= RECENCY_REQ ? 'var(--ok)' : STREAMS[k].color}"></i></div>`).join('')}</div>`;
+}
+function editPractice() {
+  const cur = periodFor(new Date()).y, profs = recencyProfs(), pr = S.profile.practice || {};
+  const ys = []; for (let y = cur; y >= cur - 4; y--) ys.push(y);
+  const w = openSheet({
+    title: 'Practice hours',
+    body: `<p class="small muted">Hours worked (paid or unpaid) using your nursing or midwifery skills, per registration year. Practice includes clinical, management, education, research and advisory roles. Rough guide: full time ≈ 1,600–1,700 h a year; one 8-hour shift a fortnight ≈ 200 h a year.</p>
+    ${ys.map(y => `<div class="row" style="align-items:flex-end"><div style="flex:.8;padding-bottom:12px;font-weight:600">${period(y).label}</div>${profs.map(k => `<label class="f"><span>${STREAMS[k].label} h</span><input type="number" inputmode="numeric" min="0" data-y="${y}" data-k="${k}" value="${pr[y]?.[k] ?? ''}"></label>`).join('')}</div>`).join('')}
+    <p class="hint">New graduates whose qualification was awarded within the last 2 years are exempt. If dual registered, you declare recency separately for each profession.</p>`,
+    foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="prSave">Save</button>`,
+  });
+  $('#prSave', w).onclick = async () => { const o = {}; $$('input[data-y]', w).forEach(i => { if (i.value !== '') { (o[i.dataset.y] = o[i.dataset.y] || {})[i.dataset.k] = Number(i.value); } }); S.profile.practice = o; await save.profile(); closeSheet(); render(); toast('Saved'); };
+}
+
+/* ---------- Say thanks / support ---------- */
+function coverHTML(b) { return `<div class="cv">${b.cover ? `<img src="${esc(b.cover)}" alt="Cover of ${esc(b.title)}" loading="lazy" onerror="this.parentNode.textContent=this.alt.replace('Cover of ','')">` : esc(b.title)}</div>`; }
+function openThanks() {
+  const sp = BRAND.support;
+  openSheet({
+    title: 'Say thanks',
+    body: `<p style="margin-top:14px">CPD Compass is free, with no ads, no tracking and no catch. If it's helped you, the nicest way to say thanks is to take a look at ${esc(sp.who)} ${esc(sp.author)}'s novels — ${esc(sp.line)}.</p>
+    <div class="card">${sp.books.map(b => `<div class="bk">${coverHTML(b)}<div style="min-width:0"><h4>${esc(b.title)}</h4><div class="small muted">${esc(b.era)}</div><p class="small" style="margin:6px 0 8px">${esc(b.blurb)}</p><a class="btn sec sm" href="${esc(b.url)}" target="_blank" rel="noopener">${I.ext} Read more</a></div></div>`).join('')}</div>
+    <a class="btn block" href="${esc(sp.site)}" target="_blank" rel="noopener">Visit ${esc(sp.author)}'s website</a>
+    <p class="hint" style="text-align:center">Telling a colleague about CPD Compass helps too. Thank you!</p>`,
+  });
+}
+function thanksCard(y, met) {
+  const sp = BRAND.support; if (!sp || !sp.enabled) return '';
+  if (!met || y !== periodFor(new Date()).y || (S.settings.thanksSeen || []).includes(y)) return '';
+  return `<div class="card thanks"><h2>🎉 You've met your CPD hours<span class="sp"></span><button class="edit" data-act="thanksDismiss" aria-label="Dismiss">${I.x}</button></h2><p class="small" style="margin:0 0 10px">Well done. CPD Compass is free with no ads — if it helped, ${esc(sp.who)} ${esc(sp.author)} writes historical fiction you might enjoy on a day off.</p><button class="btn sm" data-act="thanks">See her books</button></div>`;
+}
+
+const fmtMonth = s => { if (!s) return ''; const [y, m] = s.split('-'); return new Date(+y, (+m || 1) - 1, 1).toLocaleDateString('en-AU', { month: 'short', year: 'numeric' }); };
+
+function bindLogSearch() { const i = $('#logQ'); if (!i) return; i.oninput = () => { S.logQ = i.value; const y = S.year, q = S.logQ.toLowerCase(); const acts = actsIn(y).filter(a => !q || [a.title, a.provider, a.type, a.topics, a.reflection].join(' ').toLowerCase().includes(q)); $('#logList').innerHTML = acts.length ? acts.map(actItem).join('') : '<div class="empty">No matches.</div>'; }; }
+function bindLearnSearch() { const i = $('#learnQ'); if (!i) return; i.oninput = () => { S.learnQ = i.value; const pos = i.selectionStart; render(); const n = $('#learnQ'); n.focus(); try { n.setSelectionRange(pos, pos); } catch (e) {} }; }
+document.addEventListener('change', async e => {
+  const el = e.target;
+  if (el.dataset.self !== undefined) { const y = S.year; S.plans[y] = S.plans[y] || { self: {}, needs: [] }; S.plans[y].self = S.plans[y].self || {}; S.plans[y].self[el.dataset.self] = el.value; await save.plans(); }
+});
+
+/* =========================================================
+   ONBOARDING (resume-style start)
+   ========================================================= */
+let onbStep = 0;
+function renderOnboarding() {
+  const p = S.profile;
+  const steps = [
+    () => `${isIOS && !isStandalone ? `<div class="install"><b>Install it first.</b> In Safari tap <b>Share</b> → <b>Add to Home Screen</b>, then open CPD Compass from your home screen. On iPhone and iPad, anything entered here in Safari stays in Safari and won't appear in the installed app.</div>` : ''}
+      <div class="onb-hero"><div class="logo" style="width:64px;height:64px;border-radius:18px;box-shadow:0 6px 18px rgba(0,0,0,.25)">${BRAND.mark}</div>
+      <h1>CPD Compass</h1><div class="tag">${esc(BRAND.tagline)}</div><p style="margin:8px 0 0;opacity:.92">${esc(BRAND.sub)}</p></div>
+      <div class="card small">
+        <div class="check"><span class="dot y">✓</span><div>Counts down your hours to 31 May using the NMBA CPD standard — including dual registration and endorsements.</div></div>
+        <div class="check"><span class="dot y">✓</span><div>Photograph or scan certificates and keep them with each activity.</div></div>
+        <div class="check"><span class="dot y">✓</span><div>Learning plan, reflections and a printable audit-ready portfolio.</div></div>
+        <div class="check"><span class="dot y">✓</span><div>A directory of free learning, a LinkedIn-style professional profile and resume.</div></div>
+        <div class="check"><span class="dot y">✓</span><div>Optional AI help using your own Claude, ChatGPT or Gemini key.</div></div>
+      </div>
+      <p class="hint">Private by design: everything stays on this device. No account, no tracking. <a href="#" data-act="privacy">Privacy statement</a>. Not affiliated with, or endorsed by, Ahpra or the NMBA.</p>
+      <button class="btn block" data-act="onbNext" style="margin-top:8px">Build my profile</button>
+      <button class="btn ghost block" data-act="onbRestore">Restore from a backup</button>
+      ${BRAND.credit ? `<p class="hint" style="text-align:center">${esc(BRAND.credit)}</p>` : ''}`,
+    () => `<h1 style="font-size:24px">About you</h1><p class="muted" style="margin-top:0">Like a LinkedIn profile — you can add more later.</p>
+      ${basicsForm(p)}
+      <button class="btn block" data-act="onbNext" style="margin-top:16px">Next</button>`,
+    () => `<h1 style="font-size:24px">Current role</h1><p class="muted" style="margin-top:0">Add your current position (optional).</p>
+      <label class="f"><span>Role / title</span><input id="o_role" placeholder="e.g. Clinical Nurse, Emergency Department"></label>
+      <label class="f"><span>Organisation</span><input id="o_org" placeholder="e.g. Westmead Hospital"></label>
+      <label class="f"><span>Started</span><input id="o_start" type="month"></label>
+      <label class="f"><span>About this role</span><textarea id="o_desc" placeholder="Main responsibilities, specialty, achievements"></textarea></label>
+      <button class="btn block" data-act="onbNext" style="margin-top:16px">Finish</button>
+      <button class="btn ghost block" data-act="onbSkip">Skip</button>`,
+  ];
+  $('#app').innerHTML = `<div class="wrap onb">${onbStep ? `<div class="steps">${[1, 2].map(i => `<i class="${i <= onbStep ? 'on' : ''}"></i>`).join('')}</div>` : ''}${steps[onbStep]()}</div>`;
+  if (onbStep === 1) bindBasicsForm(document);
+}
+function basicsForm(p) {
+  return `<label class="f"><span>Full name</span><input id="b_name" autocomplete="name" value="${esc(p.name)}"></label>
+  <label class="f"><span>Headline</span><input id="b_headline" placeholder="e.g. Registered Nurse · ICU · Sydney" value="${esc(p.headline)}"></label>
+  <div class="row"><label class="f"><span>Nursing registration</span><select id="b_nurseType"><option value="RN" ${p.nurseType === 'RN' ? 'selected' : ''}>Registered nurse (RN)</option><option value="EN" ${p.nurseType === 'EN' ? 'selected' : ''}>Enrolled nurse (EN)</option><option value="" ${!p.nurseType ? 'selected' : ''}>Not a nurse</option></select></label>
+  <label class="f"><span>Midwifery</span><select id="b_midwife"><option value="0">Not a midwife</option><option value="1" ${p.midwife ? 'selected' : ''}>Registered midwife</option></select></label></div>
+  <label class="f"><span>Endorsement</span><select id="b_endorsement">${Object.entries(ENDORSEMENTS).map(([k, v]) => `<option value="${k}" ${p.endorsement === k ? 'selected' : ''}>${v}</option>`).join('')}</select></label>
+  <div class="callout info" id="b_req"></div>
+  <div class="row"><label class="f"><span>Ahpra registration no.</span><input id="b_ahpra" placeholder="NMW0001234567" value="${esc(p.ahpra)}" autocapitalize="characters"></label>
+  <label class="f"><span>State</span><select id="b_state"><option value="">—</option>${STATES.map(s => `<option ${p.state === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+  <label class="f"><span>Suburb / city</span><input id="b_location" value="${esc(p.location)}"></label>
+  <label class="f"><span>Context of practice</span><textarea id="b_context" placeholder="e.g. Adult ICU in a tertiary hospital; also casual aged care shifts">${esc(p.context)}</textarea><div class="hint">CPD must be relevant to your context of practice.</div></label>`;
+}
+function readBasics(root) {
+  const p = S.profile, v = id => ($('#' + id, root) || {}).value;
+  p.name = v('b_name').trim(); p.headline = v('b_headline').trim(); p.nurseType = v('b_nurseType'); p.midwife = v('b_midwife') === '1';
+  p.endorsement = v('b_endorsement'); p.ahpra = v('b_ahpra').trim().toUpperCase(); p.state = v('b_state'); p.location = v('b_location').trim(); p.context = v('b_context').trim();
+  if ($('#b_email', root)) { p.email = v('b_email').trim(); p.phone = v('b_phone').trim(); }
+  if ($('#t_nursing', root)) { const t = {}; ['nursing', 'midwifery', 'endorsement'].forEach(k => { const x = v('t_' + k); if (x !== '') t[k] = Number(x); }); p.targets = Object.keys(t).length ? t : null; }
+}
+function bindBasicsForm(root) {
+  const upd = () => {
+    const nt = $('#b_nurseType', root).value, mw = $('#b_midwife', root).value === '1', en = $('#b_endorsement', root).value;
+    const parts = []; if (nt) parts.push('20 h nursing'); if (mw) parts.push('20 h midwifery'); if (en !== 'none') parts.push('10 h endorsement');
+    const tot = (nt ? 20 : 0) + (mw ? 20 : 0) + (en !== 'none' ? 10 : 0);
+    let warn = '';
+    if (en === 'NP' && nt !== 'RN') warn = ' Nurse practitioners must be registered nurses.';
+    if ((en === 'MP' || en === 'SM') && !mw) warn = ' This endorsement applies to midwives.';
+    $('#b_req', root).innerHTML = `Your minimum each CPD year: <b>${tot || 20} hours</b>${parts.length > 1 ? ' (' + parts.join(' + ') + ')' : ''}.${warn ? `<br><b>${warn}</b>` : ''}`;
+  };
+  ['b_nurseType', 'b_midwife', 'b_endorsement'].forEach(id => $('#' + id, root).addEventListener('change', upd)); upd();
+}
+
+/* =========================================================
+   ACTIVITY FORM
+   ========================================================= */
+let draft = null;
+async function openActivity(a, prefill = {}) {
+  const isNew = !a;
+  const r = reqs();
+  a = a ? JSON.parse(JSON.stringify(a)) : Object.assign({ id: uid(), date: iso(new Date()), title: '', provider: '', type: ACT_TYPES[3], hours: '', streams: Object.keys(r).filter(k => k !== 'endorsement'), needId: '', topics: '', reflection: '', standards: [], refs: '', files: [], created: Date.now() }, prefill);
+  draft = { a, newFiles: prefill._newFiles || [], removed: [] };
+  delete a._newFiles;
+  const needs = Object.values(S.plans).flatMap(p => p.needs || []);
+  const stdOpts = allStandardItems();
+  const w = openSheet({
+    title: isNew ? 'Log CPD activity' : 'Edit activity',
+    body: `
+    ${isNew && !prefill.title ? `<div class="sec-title" style="margin-top:12px">Quick start</div><div class="scroller" id="a_tpl">${TEMPLATES.map((t, i) => `<button type="button" class="chip" data-tpl="${i}">${esc(t.label)}</button>`).join('')}</div>` : ''}
+    <label class="f"><span>Activity title</span><input id="a_title" value="${esc(a.title)}" placeholder="e.g. Recognising and responding to sepsis"></label>
+    <div class="row"><label class="f"><span>Date completed</span><input id="a_date" type="date" value="${esc(a.date)}"></label>
+    <label class="f"><span>Hours</span><input id="a_hours" type="number" inputmode="decimal" min="0" step="0.25" value="${esc(a.hours)}" placeholder="e.g. 1.5"></label></div>
+    <label class="f"><span>Provider / organiser</span><input id="a_provider" value="${esc(a.provider)}" placeholder="e.g. Hospital education unit"></label>
+    <label class="f"><span>Activity type</span><select id="a_type">${ACT_TYPES.map(t => `<option ${a.type === t ? 'selected' : ''}>${t}</option>`).join('')}</select></label>
+    <div id="a_warn"></div>
+    <label class="f"><span>Counts towards</span></label>
+    <div class="chips" id="a_streams">${Object.keys(r).map(k => `<label class="cbx"><input type="checkbox" value="${k}" ${(a.streams || []).includes(k) ? 'checked' : ''}> ${STREAMS[k].label}</label>`).join('')}</div>
+    ${r.nursing && r.midwifery ? '<div class="hint">Dual registered: tick both only if the learning is relevant to both your nursing and midwifery practice.</div>' : ''}
+    ${r.endorsement ? '<div class="hint">Endorsement hours are additional — only tick Endorsement for learning about your endorsed scope (e.g. prescribing, diagnostics, referral).</div>' : ''}
+    <div class="sec-title">Evidence</div>
+    <div class="row"><button class="btn sec sm" id="a_cam">${I.cam.replace('<svg', '<svg width="18" height="18"')} Photo / scan</button><button class="btn sec sm" id="a_file">${I.file.replace('<svg', '<svg width="18" height="18"')} Upload file</button></div>
+    <div class="att" id="a_att"></div>
+    <button class="btn ghost sm" id="a_aiRead" style="margin-top:6px">${I.spark} Fill details from certificate</button>
+    <div class="sec-title">Learning cycle (needed for audit)</div>
+    <label class="f"><span>Learning need this addresses</span><select id="a_need"><option value="">— Not linked —</option>${needs.map(n => `<option value="${n.id}" ${a.needId === n.id ? 'selected' : ''}>${esc(n.need)}</option>`).join('')}</select><div class="hint">Add needs on the Plan tab.</div></label>
+    <label class="f"><span>Topics covered &amp; outcome</span><textarea id="a_topics" placeholder="What was covered, what you can now do">${esc(a.topics)}</textarea></label>
+    <label class="f"><span>Reflection — how will this change your practice?</span><textarea id="a_reflection" style="min-height:130px" placeholder="What did I learn? How does it apply to my context of practice? What will I do differently?">${esc(a.reflection)}</textarea></label>
+    <div class="row" style="flex-wrap:wrap;gap:4px"><button class="btn ghost sm" id="a_guide" style="flex:none">✎ Guide me</button><button class="btn ghost sm" id="a_aiRefl" style="flex:none">${I.spark} Draft with AI</button></div>
+    <label class="f"><span>NMBA standards this relates to</span></label>
+    <div class="chips" id="a_std">${stdOpts.map(s => `<button type="button" class="chip ${(a.standards || []).includes(s) ? 'on' : ''}" data-std="${esc(s)}">${esc(s.replace(/^(\w+) (\d)\..*/, '$1 Std $2'))}</button>`).join('')}</div>
+    <div class="hint" id="a_stdHint">Tap to select. ${stdOpts.length ? '' : ''}</div>
+    <label class="f"><span>References (for self-directed learning)</span><textarea id="a_refs" placeholder="Author, year, title, journal / URL">${esc(a.refs)}</textarea></label>
+    ${isNew ? '' : '<button class="btn sec block" style="margin-top:18px" id="a_dup">Duplicate (e.g. a repeating journal club)</button><button class="btn danger block" style="margin-top:8px" id="a_del">Delete activity</button>'}`,
+    foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="a_save">Save</button>`,
+  });
+  const typeEl = $('#a_type', w), titleEl = $('#a_title', w);
+  const checkWarn = () => {
+    const t = typeEl.value, ti = titleEl.value;
+    let h = '';
+    if (/Mandatory/.test(t) || ROUTINE_RE.test(ti)) h = `<div class="callout">Routine annual mandatory training (e.g. CPR, fire safety) <b>can't</b> be counted. Only claim mandatory training if it contained genuinely new learning relevant to your practice.</div>`;
+    else if (/Self-directed/.test(t)) h = `<div class="callout info">Self-directed learning must include references to what you read.</div>`;
+    $('#a_warn', w).innerHTML = h;
+  };
+  typeEl.onchange = checkWarn; titleEl.oninput = checkWarn; checkWarn();
+  if ($('#a_tpl', w)) $('#a_tpl', w).onclick = e => { const b = e.target.closest('[data-tpl]'); if (!b) return; const t = TEMPLATES[+b.dataset.tpl]; $$('#a_tpl .chip', w).forEach(c => c.classList.toggle('on', c === b)); typeEl.value = t.type; titleEl.value = t.title || ''; titleEl.placeholder = t.ph || ''; if (t.hours && !$('#a_hours', w).value) $('#a_hours', w).value = t.hours; if (t.topics) $('#a_topics', w).placeholder = t.topics; checkWarn(); titleEl.focus(); };
+  $('#a_guide', w).onclick = () => {
+    const g = openSheet({ title: 'Guided reflection', body: `<p class="small muted">Answer in a sentence or two each. This builds a reflection that meets the NMBA requirement to reflect on how learning applies to your practice.</p>
+      <label class="f"><span>What? — what did I learn, or what was new to me?</span><textarea id="g1" style="min-height:80px"></textarea></label>
+      <label class="f"><span>So what? — why does it matter for my patients and my context of practice?</span><textarea id="g2" style="min-height:80px"></textarea></label>
+      <label class="f"><span>Now what? — what will I do differently, and how will I know it worked?</span><textarea id="g3" style="min-height:80px"></textarea></label>`,
+      foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="gUse">Add to reflection</button>` });
+    $('#gUse', g).onclick = () => { const v = ['g1', 'g2', 'g3'].map(id => $('#' + id, g).value.trim()); if (!v.some(Boolean)) return toast('Write at least one answer'); const txt = [v[0] && `What I learned: ${v[0]}`, v[1] && `Why it matters to my practice: ${v[1]}`, v[2] && `What I will do differently: ${v[2]}`].filter(Boolean).join('\n\n'); const r = $('#a_reflection', w); r.value = (r.value.trim() ? r.value.trim() + '\n\n' : '') + txt; closeSheet(); };
+  };
+  if (!isNew) $('#a_dup', w).onclick = () => { closeSheet(); openActivity(null, { title: a.title, provider: a.provider, type: a.type, hours: a.hours, streams: a.streams, needId: a.needId, standards: a.standards, date: iso(new Date()) }); toast('Copy made — update the date and reflection'); };
+  $('#a_std', w).onclick = e => { const b = e.target.closest('[data-std]'); if (b) b.classList.toggle('on'); };
+  $$('#a_streams input', w).forEach(cb => cb.onchange = () => { if (cb.value === 'endorsement' && cb.checked) $$('#a_streams input', w).forEach(o => { if (o.value !== 'endorsement') o.checked = false; }); else if (cb.checked) { const e = $('#a_streams input[value=endorsement]', w); if (e) e.checked = false; } });
+  const addFile = async f => { const s = await scanEditor(f); if (s) { draft.newFiles.push({ id: uid(), ...s }); drawAtt(); } };
+  $('#a_cam', w).onclick = () => pick('cam', addFile);
+  $('#a_file', w).onclick = () => pick('file', async fs => {
+    if (fs.length === 1 && fs[0].type.startsWith('image/')) return addFile(fs[0]);
+    for (const f of fs) draft.newFiles.push({ id: uid(), ...(f.type.startsWith('image/') ? await compressImage(f) : { blob: f, name: f.name, type: f.type || 'application/octet-stream' }) });
+    drawAtt();
+  });
+  const drawAtt = async () => {
+    const box = $('#a_att', w); if (!box) return;
+    const items = [];
+    for (const id of draft.a.files.filter(id => !draft.removed.includes(id))) { const rec = await DB.get('files', id); if (rec) items.push({ id, blob: rec.blob, name: rec.name, type: rec.type }); }
+    items.push(...draft.newFiles);
+    (box._urls || []).forEach(u => URL.revokeObjectURL(u)); box._urls = [];
+    box._items = items;
+    box.innerHTML = items.map(it => { const u = URL.createObjectURL(it.blob); box._urls.push(u); return `<div class="th tap" data-open="${it.id}">${it.type.startsWith('image/') ? `<img src="${u}" alt="">` : `PDF<br>${esc(it.name.slice(0, 18))}`}<button data-rm="${it.id}" aria-label="Remove">×</button></div>`; }).join('') || '<div class="hint">No evidence yet — certificates, attendance letters, notes or article PDFs.</div>';
+    $('#a_aiRead', w).style.display = items.some(i => i.type.startsWith('image/')) ? '' : 'none';
+  };
+  $('#a_att', w).onclick = e => {
+    const rm = e.target.closest('[data-rm]'); if (rm) { e.stopPropagation(); const id = rm.dataset.rm; const ni = draft.newFiles.findIndex(f => f.id === id); if (ni > -1) draft.newFiles.splice(ni, 1); else draft.removed.push(id); drawAtt(); return; }
+    const th = e.target.closest('[data-open]'); if (th) { const it = ($('#a_att', w)._items || []).find(x => x.id === th.dataset.open); if (it) viewFile(it.blob, it.name, it.type); }
+  };
+  drawAtt();
+  $('#a_aiRead', w).onclick = e => {
+    if (!aiReady()) return noAI();
+    withBusy(e.currentTarget, async () => {
+      let blob = draft.newFiles.find(f => f.type.startsWith('image/'))?.blob;
+      if (!blob) for (const id of draft.a.files) { const rec = await DB.get('files', id); if (rec && rec.type.startsWith('image/')) { blob = rec.blob; break; } }
+      const b64 = (await blobToDataURL(blob)).split(',')[1];
+      const txt = await aiAsk('Read this certificate of attainment / attendance. Reply ONLY with JSON: {"title":"","provider":"","date":"YYYY-MM-DD","hours":number|null,"topics":"one or two sentences on content if stated"}. Use null or "" when not shown. Do not guess hours if not stated (CPD points are not hours unless stated).', { image: { mime: 'image/jpeg', b64 }, max: 500 });
+      const j = parseJSON(txt);
+      const set = (id, v) => { const el = $('#' + id, w); if (el && v && !el.value) el.value = v; };
+      set('a_title', j.title); set('a_provider', j.provider); if (j.date && /^\d{4}-\d{2}-\d{2}$/.test(j.date)) $('#a_date', w).value = j.date; if (j.hours) set('a_hours', j.hours); set('a_topics', j.topics);
+      checkWarn(); toast('Details filled — please check them');
+    });
+  };
+  $('#a_aiRefl', w).onclick = e => {
+    if (!aiReady()) return noAI();
+    withBusy(e.currentTarget, async () => {
+      const need = needs.find(n => n.id === $('#a_need', w).value);
+      const txt = await aiAsk(`Draft a first-person CPD reflection (120–180 words, plain prose, no headings) for this activity. Cover: what I learned, how it applies to my context of practice, what I will do differently, and which NMBA standard(s) it relates to. Use [brackets] for details I need to supply. If my notes already contain a reflection, improve it rather than replacing its facts.
+Activity: ${$('#a_title', w).value} (${typeEl.value}, ${$('#a_hours', w).value || '?'} h, ${$('#a_provider', w).value})
+Learning need: ${need ? need.need : 'not stated'}
+Topics/outcome: ${$('#a_topics', w).value}
+My notes: ${$('#a_reflection', w).value}
+${cpdContext()}`, { max: 700 });
+      $('#a_reflection', w).value = txt; toast('Draft added — edit it to make it yours');
+    });
+  };
+  if (!isNew) $('#a_del', w).onclick = async () => { if (await confirmBox('Delete this activity and its evidence?', 'Delete', true)) { for (const id of a.files) await DB.del('files', id); await DB.del('activities', a.id); S.acts = S.acts.filter(x => x.id !== a.id); closeSheet(); render(); toast('Deleted'); } };
+  $('#a_save', w).onclick = async () => {
+    const A = draft.a;
+    A.title = titleEl.value.trim(); A.date = $('#a_date', w).value; A.hours = Number($('#a_hours', w).value) || 0; A.provider = $('#a_provider', w).value.trim(); A.type = typeEl.value;
+    A.streams = $$('#a_streams input:checked', w).map(c => c.value); A.needId = $('#a_need', w).value; A.topics = $('#a_topics', w).value.trim(); A.reflection = $('#a_reflection', w).value.trim();
+    A.standards = $$('#a_std .chip.on', w).map(b => b.dataset.std); A.refs = $('#a_refs', w).value.trim(); A.updated = Date.now();
+    if (!A.title) return toast('Add a title');
+    if (!A.date) return toast('Add the date');
+    if (!(A.hours > 0)) return toast('Add the hours');
+    if (!A.streams.length) return toast('Choose what it counts towards');
+    for (const id of draft.removed) await DB.del('files', id);
+    A.files = A.files.filter(id => !draft.removed.includes(id));
+    for (const f of draft.newFiles) { await DB.put('files', { id: f.id, activityId: A.id, blob: f.blob, name: f.name, type: f.type }); A.files.push(f.id); }
+    await DB.put('activities', A);
+    S.acts = S.acts.filter(x => x.id !== A.id).concat(A);
+    const y = periodFor(parseISO(A.date)).y; if (y !== S.year) S.year = y;
+    closeSheet(); render(); toast(isNew ? 'CPD logged ✓' : 'Saved');
+  };
+}
+
+/* =========================================================
+   PLAN: learning needs
+   ========================================================= */
+function openNeed(id, pre = {}) {
+  const y = S.year; S.plans[y] = S.plans[y] || { self: {}, needs: [] }; const pl = S.plans[y];
+  const n = id ? { ...pl.needs.find(x => x.id === id) } : Object.assign({ id: uid(), need: '', standard: '', goal: '', actions: '', target: iso(period(y).end), status: 'Planned' }, pre);
+  const w = openSheet({
+    title: id ? 'Learning need' : 'Add learning need',
+    body: `<label class="f"><span>Identified learning need</span><textarea id="n_need" style="min-height:70px" placeholder="e.g. Update my knowledge of sepsis recognition after a near-miss on the ward">${esc(n.need)}</textarea></label>
+    <label class="f"><span>Related NMBA standard</span><select id="n_std"><option value="">—</option>${allStandardItems().map(s => `<option ${n.standard === s ? 'selected' : ''}>${esc(s)}</option>`).join('')}</select></label>
+    <label class="f"><span>Goal / outcome</span><textarea id="n_goal" style="min-height:70px" placeholder="What will you be able to do?">${esc(n.goal)}</textarea></label>
+    <label class="f"><span>Action plan</span><textarea id="n_act" style="min-height:70px" placeholder="Activities you'll do — courses, reading, in-services">${esc(n.actions)}</textarea></label>
+    <div class="row"><label class="f"><span>Target date</span><input id="n_target" type="date" value="${esc(n.target)}"></label>
+    <label class="f"><span>Status</span><select id="n_status">${['Planned', 'In progress', 'Achieved'].map(s => `<option ${n.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label></div>
+    ${id ? '<button class="btn danger block" style="margin-top:18px" id="n_del">Delete</button>' : ''}`,
+    foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="n_save">Save</button>`,
+  });
+  if (id) $('#n_del', w).onclick = async () => { pl.needs = pl.needs.filter(x => x.id !== id); await save.plans(); closeSheet(); render(); };
+  $('#n_save', w).onclick = async () => {
+    n.need = $('#n_need', w).value.trim(); if (!n.need) return toast('Describe the learning need');
+    n.standard = $('#n_std', w).value; n.goal = $('#n_goal', w).value.trim(); n.actions = $('#n_act', w).value.trim(); n.target = $('#n_target', w).value; n.status = $('#n_status', w).value;
+    const i = pl.needs.findIndex(x => x.id === n.id); if (i > -1) pl.needs[i] = n; else pl.needs.push(n);
+    await save.plans(); closeSheet(); render(); toast('Saved');
+  };
+}
+async function aiNeeds(btn) {
+  if (!aiReady()) return noAI();
+  await withBusy(btn, async () => {
+    const y = S.year, self = (S.plans[y] || {}).self || {};
+    const rated = Object.entries(self).filter(([, v]) => v).map(([k, v]) => { const std = k.replace(/\d+$/, ''), i = +k.match(/\d+$/)[0]; return `${std} ${STANDARDS[std].items[i]}: ${{ c: 'confident', d: 'developing', p: 'priority' }[v]}`; });
+    const txt = await aiAsk(`Suggest 4 specific, realistic CPD learning needs for me for this CPD year. Reply ONLY with a JSON array of objects: [{"need":"","standard":"exact text of one standard from the list","goal":"","actions":"2-3 concrete activities, preferring free Australian options where possible"}].
+Standards list: ${allStandardItems().join(' | ')}
+My self-assessment: ${rated.join('; ') || 'not done'}
+${cpdContext()}
+Profile summary: ${S.profile.about || ''} Experience: ${(S.profile.experience || []).map(e => e.role + ' at ' + e.org).join('; ')}`, { max: 1200 });
+    const list = parseJSON(txt);
+    const w = openSheet({ title: 'Suggested learning needs', body: `<p class="small muted">Tap “Add” to put one in your plan, then edit it to fit.</p>${list.map((n, i) => `<div class="card"><b>${esc(n.need)}</b><div class="small muted">${esc(n.standard)}</div><p class="small">${esc(n.goal)}</p><p class="small"><b>Plan:</b> ${esc(n.actions)}</p><button class="btn sm" data-i="${i}">Add to plan</button></div>`).join('')}` });
+    w.addEventListener('click', async e => { const b = e.target.closest('[data-i]'); if (!b) return; const n = list[+b.dataset.i]; S.plans[y] = S.plans[y] || { self: {}, needs: [] }; S.plans[y].needs.push({ id: uid(), need: n.need, standard: allStandardItems().includes(n.standard) ? n.standard : '', goal: n.goal, actions: n.actions, target: iso(period(y).end), status: 'Planned' }); await save.plans(); b.disabled = true; b.textContent = 'Added ✓'; render(); });
+  });
+}
+
+/* =========================================================
+   PROFILE editors
+   ========================================================= */
+function editBasics() {
+  const p = S.profile, t = p.targets || {};
+  const w = openSheet({
+    title: 'Edit profile',
+    body: `<div style="display:flex;gap:12px;align-items:center;margin-top:10px"><div class="pf-photo" style="margin:0;width:72px;height:72px;font-size:24px" id="b_ph">${p.photo ? `<img src="${p.photo}" alt="">` : '?'}</div><button class="btn sec sm" id="b_phBtn">Change photo</button>${p.photo ? '<button class="btn ghost sm" id="b_phRm">Remove</button>' : ''}</div>
+    ${basicsForm(p)}
+    <div class="row"><label class="f"><span>Email</span><input id="b_email" type="email" value="${esc(p.email)}"></label><label class="f"><span>Phone</span><input id="b_phone" type="tel" value="${esc(p.phone)}"></label></div>
+    <details style="margin-top:16px"><summary class="small" style="font-weight:600">Custom hour targets (advanced)</summary>
+      <p class="hint">Leave blank to use the NMBA minimums. Use this if the standard changes, or for pro-rata arrangements agreed with the Board.</p>
+      <div class="row"><label class="f"><span>Nursing</span><input id="t_nursing" type="number" min="0" value="${t.nursing ?? ''}"></label><label class="f"><span>Midwifery</span><input id="t_midwifery" type="number" min="0" value="${t.midwifery ?? ''}"></label><label class="f"><span>Endorsement</span><input id="t_endorsement" type="number" min="0" value="${t.endorsement ?? ''}"></label></div>
+    </details>`,
+    foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="b_save">Save</button>`,
+  });
+  bindBasicsForm(w);
+  let photo = p.photo;
+  $('#b_phBtn', w).onclick = () => pick('photo', async f => { photo = await resizeToDataURL(f, 400); $('#b_ph', w).innerHTML = `<img src="${photo}" alt="">`; });
+  if ($('#b_phRm', w)) $('#b_phRm', w).onclick = () => { photo = ''; $('#b_ph', w).textContent = '?'; };
+  $('#b_save', w).onclick = async () => { readBasics(w); p.photo = photo; await save.profile(); closeSheet(); render(); toast('Profile saved'); };
+}
+function editAbout() {
+  const p = S.profile;
+  const w = openSheet({
+    title: 'About',
+    body: `<label class="f"><span>Professional summary</span><textarea id="ab" style="min-height:200px" placeholder="e.g. Registered nurse with 8 years in emergency and retrieval…">${esc(p.about)}</textarea></label>
+    <button class="btn ghost sm" id="abAI" style="margin-top:6px">${I.spark} ${p.about ? 'Polish with AI' : 'Draft with AI from my profile'}</button>`,
+    foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="abSave">Save</button>`,
+  });
+  $('#abAI', w).onclick = e => { if (!aiReady()) return noAI(); withBusy(e.currentTarget, async () => {
+    const txt = await aiAsk(`Write a LinkedIn-style "About" summary (80–130 words, first person, Australian English, no hashtags or emojis) for my nursing resume. Keep facts I've given; use [brackets] for anything missing. Current draft: "${$('#ab', w).value}". Headline: ${p.headline}. Registration: ${regLabel()}. Context: ${p.context}. Experience: ${(p.experience || []).map(e => `${e.role} at ${e.org} (${e.start || ''}–${e.current ? 'present' : e.end || ''}): ${e.desc || ''}`).join('; ')}. Education: ${(p.education || []).map(e => e.qual + ', ' + e.inst).join('; ')}. Skills: ${(p.skills || []).join(', ')}.`, { system: 'You help Australian nurses write professional profiles. Be accurate; never invent qualifications or employers.', max: 500 });
+    $('#ab', w).value = txt; }); };
+  $('#abSave', w).onclick = async () => { p.about = $('#ab', w).value.trim(); await save.profile(); closeSheet(); render(); };
+}
+function editList(kind, id) {
+  const p = S.profile, cfg = {
+    exp: { key: 'experience', title: 'Experience', blank: { role: '', org: '', location: '', start: '', end: '', current: false, desc: '' },
+      form: e => `<label class="f"><span>Role / title</span><input id="x_role" value="${esc(e.role)}" placeholder="e.g. Clinical Nurse Specialist"></label><label class="f"><span>Organisation / ward</span><input id="x_org" value="${esc(e.org)}"></label><label class="f"><span>Location</span><input id="x_location" value="${esc(e.location)}"></label><div class="row"><label class="f"><span>Start</span><input id="x_start" type="month" value="${esc(e.start)}"></label><label class="f"><span>End</span><input id="x_end" type="month" value="${esc(e.end)}"></label></div><label class="cbx" style="margin-top:10px"><input type="checkbox" id="x_current" ${e.current ? 'checked' : ''}> I currently work here</label><label class="f"><span>Description</span><textarea id="x_desc">${esc(e.desc)}</textarea></label>`,
+      read: (w, e) => { ['role', 'org', 'location', 'start', 'end', 'desc'].forEach(k => e[k] = $('#x_' + k, w).value.trim()); e.current = $('#x_current', w).checked; return e.role; } },
+    edu: { key: 'education', title: 'Education', blank: { qual: '', inst: '', year: '' },
+      form: e => `<label class="f"><span>Qualification</span><input id="x_qual" value="${esc(e.qual)}" placeholder="e.g. Bachelor of Nursing"></label><label class="f"><span>Institution</span><input id="x_inst" value="${esc(e.inst)}"></label><label class="f"><span>Year completed</span><input id="x_year" inputmode="numeric" value="${esc(e.year)}"></label>`,
+      read: (w, e) => { ['qual', 'inst', 'year'].forEach(k => e[k] = $('#x_' + k, w).value.trim()); return e.qual; } },
+    lic: { key: 'licences', title: 'Licence / certification', blank: { name: '', issuer: '', issued: '', expiry: '' },
+      form: e => `<label class="f"><span>Name</span><input id="x_name" value="${esc(e.name)}" placeholder="e.g. Advanced Life Support (ALS2)"></label><label class="f"><span>Issued by</span><input id="x_issuer" value="${esc(e.issuer)}"></label><div class="row"><label class="f"><span>Issued</span><input id="x_issued" type="date" value="${esc(e.issued)}"></label><label class="f"><span>Expires</span><input id="x_expiry" type="date" value="${esc(e.expiry)}"></label></div><p class="hint">Expiring items show on your Home screen 60 days ahead.</p>`,
+      read: (w, e) => { ['name', 'issuer', 'issued', 'expiry'].forEach(k => e[k] = $('#x_' + k, w).value.trim()); return e.name; } },
+  }[kind];
+  const arr = p[cfg.key] = p[cfg.key] || [];
+  const e = id ? { ...arr.find(x => x.id === id) } : { id: uid(), ...cfg.blank };
+  const w = openSheet({ title: cfg.title, body: cfg.form(e) + (id ? '<button class="btn danger block" style="margin-top:18px" id="x_del">Delete</button>' : ''), foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="x_save">Save</button>` });
+  if (id) $('#x_del', w).onclick = async () => { p[cfg.key] = arr.filter(x => x.id !== id); await save.profile(); closeSheet(); render(); };
+  $('#x_save', w).onclick = async () => { if (!cfg.read(w, e)) return toast('Please fill in the first field'); const i = arr.findIndex(x => x.id === e.id); if (i > -1) arr[i] = e; else arr.unshift(e); if (cfg.key === 'experience') arr.sort((a, b) => (b.current - a.current) || (b.start || '').localeCompare(a.start || '')); await save.profile(); closeSheet(); render(); };
+}
+function editSkills() {
+  const p = S.profile;
+  const w = openSheet({ title: 'Skills & languages', body: `<label class="f"><span>Skills (comma separated)</span><textarea id="sk">${esc((p.skills || []).join(', '))}</textarea><div class="hint">e.g. Triage, Wound care, Medication safety, Team leadership</div></label><label class="f"><span>Languages (comma separated)</span><input id="lg" value="${esc((p.languages || []).join(', '))}"></label>`, foot: `<button class="btn sec" style="flex:1" data-act="closeSheet">Cancel</button><button class="btn" style="flex:2" id="skSave">Save</button>` });
+  $('#skSave', w).onclick = async () => { const sp = v => v.split(',').map(s => s.trim()).filter(Boolean); p.skills = sp($('#sk', w).value); p.languages = sp($('#lg', w).value); await save.profile(); closeSheet(); render(); };
+}
+
+/* =========================================================
+   AI chat
+   ========================================================= */
+function openAI() {
+  if (!aiReady()) return noAI();
+  const hist = [];
+  const w = openSheet({
+    title: 'CPD assistant · ' + AI_DEF[aiCfg().provider].label,
+    body: `<div class="chat" id="chat"><div class="msg a">Hi${S.profile.name ? ' ' + esc(S.profile.name.split(' ')[0]) : ''}! I can see your CPD progress for ${period(S.year).label}. Ask me about CPD requirements, ideas for free learning, help writing a reflection, or planning your hours.</div></div>
+    <div class="chips" id="sugg">${['What counts as CPD?', 'Plan my remaining hours', 'Ideas for free CPD in my area', 'Do I need endorsement hours?'].map(s => `<button class="chip">${s}</button>`).join('')}</div>`,
+    foot: `<input id="chatIn" placeholder="Ask about your CPD…" style="flex:1"><button class="btn" id="chatGo">Send</button>`,
+  });
+  const box = $('#chat', w), inp = $('#chatIn', w), go = $('#chatGo', w);
+  const send = async text => {
+    text = (text || inp.value).trim(); if (!text) return; inp.value = '';
+    box.insertAdjacentHTML('beforeend', `<div class="msg u">${esc(text)}</div><div class="msg a" id="pend"><span class="spin"></span></div>`);
+    $('.sheet-b', w).scrollTop = 1e9; go.disabled = true;
+    try {
+      const reply = await aiAsk(hist.length ? text : `${cpdContext()}\n\nMy question: ${text}`, { history: hist, max: 1000 });
+      hist.push({ role: 'user', text: hist.length ? text : `${cpdContext()}\n\nMy question: ${text}` }, { role: 'assistant', text: reply });
+      $('#pend', w).textContent = reply;
+    } catch (e) { $('#pend', w).textContent = '⚠️ ' + e.message; }
+    $('#pend', w).removeAttribute('id'); go.disabled = false; $('.sheet-b', w).scrollTop = 1e9;
+  };
+  go.onclick = () => send(); inp.onkeydown = e => { if (e.key === 'Enter') send(); };
+  $('#sugg', w).onclick = e => { const c = e.target.closest('.chip'); if (c) { $('#sugg', w).remove(); send(c.textContent); } };
+}
+
+/* =========================================================
+   SETTINGS, BACKUP, REPORTS
+   ========================================================= */
+function openSettings() {
+  while (sheets.length) closeSheet();
+  const a = S.settings.ai;
+  const w = openSheet({
+    title: 'Settings',
+    body: `
+    <div class="sec-title">AI assistant (optional)</div>
+    <div class="card">
+      <label class="f" style="margin-top:0"><span>Provider</span><select id="s_prov">${Object.entries(AI_DEF).map(([k, v]) => `<option value="${k}" ${a.provider === k ? 'selected' : ''}>${v.label}</option>`).join('')}</select></label>
+      <label class="f"><span>Your API key</span><input id="s_key" type="password" autocomplete="off" spellcheck="false"></label>
+      <div class="hint" id="s_keyHint"></div>
+      <label class="f"><span>Model</span><input id="s_model" spellcheck="false"></label>
+      <div class="hint">Change this if your provider releases a newer model.</div>
+      <div class="row" style="margin-top:12px"><button class="btn sm" id="s_aiSave">Save</button><button class="btn sec sm" id="s_aiTest">Test</button></div>
+      <p class="hint">Your key is stored only on this device and sent directly to the provider. It's never included in backups. Charges go to your own AI account. Don't put patient-identifying information into the AI.</p>
+    </div>
+    <div class="sec-title">Your records</div>
+    <div class="card">
+      <button class="btn block" data-act="backup">Back up everything (.json)</button>
+      <button class="btn sec block" style="margin-top:8px" data-act="restore">Restore from backup</button>
+      <p class="hint">Records are stored only on this device. Back up regularly (e.g. to iCloud Drive, Google Drive or email) — NMBA recommends keeping CPD records for 5 years. Backups include certificates.</p>
+      <div class="row" style="margin-top:10px"><button class="btn sec sm" data-act="printPortfolio">Portfolio PDF</button><button class="btn sec sm" data-act="exportCSV">CSV</button><button class="btn sec sm" data-act="ics">Calendar reminder</button></div>
+    </div>
+    ${BRAND.support && BRAND.support.enabled ? `<div class="card thanks" style="margin-top:20px"><h2>♥ Say thanks</h2><p class="small" style="margin:0 0 10px">CPD Compass is free. If it helps you, take a look at ${esc(BRAND.support.who)} ${esc(BRAND.support.author)}'s novels.</p><button class="btn sm" data-act="thanks">See the books</button></div>` : ''}
+    <div class="sec-title">Appearance</div>
+    <div class="card"><div class="chips">${[['auto', 'Automatic'], ['light', 'Light'], ['dark', 'Dark']].map(([k, l]) => `<button class="chip ${S.settings.theme === k ? 'on' : ''}" data-act="theme" data-t="${k}">${l}</button>`).join('')}</div></div>
+    <div class="sec-title">NMBA CPD requirements</div>
+    <div class="card small">${RULES_HTML}</div>
+    <div class="sec-title">About</div>
+    <div class="card small"><p style="margin-top:0"><b>${APP.name}</b> v${APP.version} — <i>${esc(BRAND.tagline)}</i> A free tool to help Australian nurses and midwives plan, record and evidence CPD.</p><p>Not affiliated with, or endorsed by, Ahpra or the Nursing and Midwifery Board of Australia. It's a record-keeping aid, not regulatory advice — you remain responsible for meeting the registration standard.</p><p style="margin-bottom:0">Install it: on iPhone/iPad tap <b>Share → Add to Home Screen</b> in Safari; on Android tap <b>⋮ → Install app</b> in Chrome.</p>${BRAND.credit || BRAND.contact ? `<p style="margin-bottom:0">${esc(BRAND.credit)}${BRAND.credit && BRAND.contact ? ' · ' : ''}${BRAND.contact ? `Feedback: <a href="mailto:${esc(BRAND.contact)}">${esc(BRAND.contact)}</a>` : ''}</p>` : ''}</div>
+    <div class="sec-title">Privacy</div>
+    <div class="card small">${PRIVACY_HTML}</div>
+    <div class="sec-title">Where are my records saved?</div>
+    <div class="card small"><p style="margin-top:0">On <b>this device only</b>, inside the app's private storage. Nothing is sent to us, and there's no account.</p><ul style="padding-left:18px;margin:6px 0"><li>Certificate photos are kept inside the app, not in your Photos app.</li><li>Records <b>don't</b> sync between devices, and aren't in iCloud or Google backups.</li><li>Deleting the app from your home screen, or clearing website data in Safari or Chrome, <b>deletes your records</b>.</li><li>Use <b>Back up everything</b> regularly and save the file to Files, iCloud Drive, Google Drive or email. To move to a new phone, restore that file there.</li></ul></div>
+    <button class="btn danger block" style="margin-top:8px" data-act="wipe">Delete all data on this device</button>`,
+  });
+  const prov = $('#s_prov', w), key = $('#s_key', w), model = $('#s_model', w);
+  const fill = () => { const k = prov.value; key.value = a.keys[k] || ''; key.placeholder = AI_DEF[k].hint; model.value = a.models[k] || AI_DEF[k].model; $('#s_keyHint', w).innerHTML = `Get a key: <a href="${AI_DEF[k].url}" target="_blank" rel="noopener">${AI_DEF[k].url.replace('https://', '')}</a>`; };
+  prov.onchange = fill; fill();
+  const store = async () => { a.provider = prov.value; a.keys[prov.value] = key.value.trim(); a.models[prov.value] = model.value.trim(); await save.settings(); };
+  $('#s_aiSave', w).onclick = async () => { await store(); toast('AI settings saved'); };
+  $('#s_aiTest', w).onclick = e => withBusy(e.currentTarget, async () => { await store(); const r = await aiAsk('Reply with exactly: Connected ✓', { max: 20 }); toast(r.slice(0, 60) || 'Connected'); });
+}
+
+async function doBackup() {
+  toast('Preparing backup…');
+  const files = [];
+  for (const f of await DB.all('files')) files.push({ id: f.id, activityId: f.activityId, name: f.name, type: f.type, data: await blobToDataURL(f.blob) });
+  const settings = JSON.parse(JSON.stringify(S.settings)); settings.ai.keys = {};
+  const out = { app: 'cpd-compass', version: 1, exported: new Date().toISOString(), profile: S.profile, settings, plans: S.plans, sites: S.sites, activities: S.acts, files };
+  await deliver(`cpd-compass-backup-${iso(new Date())}.json`, new Blob([JSON.stringify(out)], { type: 'application/json' }));
+  S.settings.lastBackup = Date.now(); await save.settings(); if (S.settings.onboarded) render();
+}
+function doRestore() {
+  pick('backup', async f => {
+    try {
+      const d = JSON.parse(await f.text()); if (d.app !== 'cpd-compass') throw new Error('Not a CPD Compass backup');
+      if (S.acts.length && !(await confirmBox(`Replace the records on this device with the backup from ${fmtDate(iso(new Date(d.exported)))}? (${plural(d.activities.length, 'activity')})`, 'Replace'))) return;
+      const keys = S.settings.ai.keys;
+      await DB.clear('activities'); await DB.clear('files');
+      for (const a of d.activities) await DB.put('activities', a);
+      for (const x of d.files || []) await DB.put('files', { id: x.id, activityId: x.activityId, name: x.name, type: x.type, blob: await dataURLToBlob(x.data) });
+      S.profile = Object.assign(defaultProfile(), d.profile); S.plans = d.plans || {}; S.sites = d.sites || { custom: [], hidden: [] };
+      S.settings = Object.assign(defaultSettings(), d.settings, { onboarded: true }); S.settings.ai.keys = keys;
+      await save.profile(); await save.plans(); await save.sites(); await save.settings();
+      S.acts = await DB.all('activities'); while (sheets.length) closeSheet(); $('#app').innerHTML = ''; applyTheme(); render(); toast('Backup restored ✓');
+    } catch (e) { toast('Restore failed: ' + e.message, 4000); }
+  });
+}
+function csvCell(v) { v = String(v ?? ''); return /[",\n]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+function exportCSV() {
+  const y = S.year, needs = Object.fromEntries((S.plans[y]?.needs || []).map(n => [n.id, n.need]));
+  const rows = [['Date', 'Title', 'Provider', 'Activity type', 'Hours', 'Counts towards', 'Learning need', 'Topics & outcome', 'Reflection', 'NMBA standards', 'References', 'Evidence files']];
+  actsIn(y).slice().reverse().forEach(a => rows.push([a.date, a.title, a.provider, a.type, a.hours, (a.streams || []).join('; '), needs[a.needId] || '', a.topics, a.reflection, (a.standards || []).join('; '), a.refs, (a.files || []).length]));
+  deliver(`cpd-log-${period(y).label}.csv`, new Blob(['﻿' + rows.map(r => r.map(csvCell).join(',')).join('\r\n')], { type: 'text/csv' }));
+}
+function exportICS() {
+  const y = periodFor(new Date()).y, end = `${y + 1}0531`, stamp = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  const ev = (id, date, title, desc, alarms) => `BEGIN:VEVENT\r\nUID:${id}@cpdcompass\r\nDTSTAMP:${stamp}\r\nDTSTART;VALUE=DATE:${date}\r\nSUMMARY:${title}\r\nDESCRIPTION:${desc}\r\n${alarms.map(a => `BEGIN:VALARM\r\nACTION:DISPLAY\r\nDESCRIPTION:${title}\r\nTRIGGER:-P${a}D\r\nEND:VALARM\r\n`).join('')}END:VEVENT\r\n`;
+  const ics = `BEGIN:VCALENDAR\r\nVERSION:2.0\r\nPRODID:-//CPD Compass//EN\r\n` +
+    ev('mid' + y, `${y}1201`, 'CPD half-way check', 'Open CPD Compass: check your hours, reflections and evidence for this CPD year.', [0]) +
+    ev('end' + y, end, 'CPD year ends — renewal declaration', 'Your NMBA CPD year ends 31 May. Check your hours are complete and back up your CPD Compass records.', [60, 30, 7]) +
+    `END:VCALENDAR\r\n`;
+  deliver(`cpd-reminders-${period(y).label}.ics`, new Blob([ics], { type: 'text/calendar' }));
+}
+
+/* Print, or save as a stand-alone file (print from iPhone home-screen apps can be unreliable) */
+async function printHTML(html, name = 'document') {
+  const w = openSheet({ title: 'Print or save', body: `<p>Choose <b>Print / PDF</b> to print or “Save as PDF” from the print dialog. If printing doesn't open on your device, <b>Save as file</b> and open it in Safari or Chrome to print from there — or attach it to an email.</p>`, foot: `<button class="btn sec" style="flex:1" id="phFile">Save as file</button><button class="btn" style="flex:1" id="phPrint">Print / PDF</button>` });
+  $('#phPrint', w).onclick = async () => {
+    closeSheet(); const pr = $('#print'); pr.innerHTML = html;
+    await Promise.all($$('img', pr).map(i => i.complete ? 0 : new Promise(r => { i.onload = i.onerror = r; })));
+    setTimeout(() => { window.print(); }, 150);
+  };
+  $('#phFile', w).onclick = () => {
+    closeSheet();
+    const css = (document.querySelector('style').textContent.match(/@media print\{([\s\S]*?)\n\}/) || [, ''])[1];
+    const doc = `<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(name)}</title><style>${css} body{max-width:1000px;margin:16px auto;padding:0 12px}</style></head><body><div id="print">${html}</div></body></html>`;
+    deliver(name.replace(/[^\w\-]+/g, '-') + '.html', new Blob([doc], { type: 'text/html' }));
+  };
+}
+async function printPortfolio() {
+  const y = S.year, p = S.profile, r = reqs(), t = totals(y), acts = actsIn(y).slice().reverse(), pl = S.plans[y] || { needs: [] };
+  const needs = Object.fromEntries((pl.needs || []).map(n => [n.id, n]));
+  const withImgs = await confirmBox('Include certificate images at the end of the portfolio?', 'Include images');
+  let ev = '';
+  if (withImgs) for (const a of acts) for (const id of a.files || []) { const f = await DB.get('files', id); if (f && f.type.startsWith('image/')) ev += `<div class="ev"><b>${esc(a.title)}</b> — ${fmtDate(a.date)}<br><img src="${await blobToDataURL(f.blob)}"></div>`; else if (f) ev += `<div class="ev"><b>${esc(a.title)}</b> — attached file: ${esc(f.name)}</div>`; }
+  const html = `<h1>CPD portfolio · ${period(y).label}</h1>
+  <div>${esc(p.name)} · ${regLabel()}${p.ahpra ? ' · Ahpra ' + esc(p.ahpra) : ''}</div>
+  <div style="color:#555">CPD year 1 June ${y} – 31 May ${y + 1} · Generated ${fmtDate(iso(new Date()))} with CPD Compass</div>
+  ${p.context ? `<p><b>Context of practice:</b> ${esc(p.context)}</p>` : ''}
+  <h2>Summary of hours</h2><table><tr><th>Category</th><th>Required</th><th>Completed</th><th>Status</th></tr>${Object.keys(r).map(k => `<tr><td>${STREAMS[k].label}</td><td>${r[k]}</td><td>${fmtH(t[k])}</td><td>${t[k] >= r[k] ? 'Met' : 'Short by ' + fmtH(r[k] - t[k])}</td></tr>`).join('')}</table>
+  ${Object.keys(p.practice || {}).length ? `<h2>Recency of practice (preceding 5 years)</h2><table><tr><th>Profession</th><th>Hours recorded</th><th>Required</th></tr>${Object.entries(recencyTotals()).map(([k, v]) => `<tr><td>${STREAMS[k].label}</td><td>${Math.round(v)}</td><td>${RECENCY_REQ}</td></tr>`).join('')}</table>` : ''}
+  <h2>Learning plan</h2>${(pl.needs || []).length ? `<table><tr><th>Identified learning need</th><th>Standard</th><th>Goal</th><th>Action plan</th><th>Target</th><th>Status</th></tr>${pl.needs.map(n => `<tr><td>${esc(n.need)}</td><td>${esc(n.standard)}</td><td>${esc(n.goal)}</td><td>${esc(n.actions)}</td><td>${fmtDate(n.target)}</td><td>${esc(n.status)}</td></tr>`).join('')}</table>` : '<p>No learning plan recorded.</p>'}
+  <h2>CPD record (NMBA template format)</h2>
+  <table><tr><th style="width:9%">Date</th><th style="width:14%">Identified learning need</th><th style="width:12%">Action plan</th><th style="width:20%">Activity type, topics &amp; outcome</th><th style="width:28%">Reflection on how this applies to practice</th><th style="width:10%">Evidence</th><th style="width:7%">Hours</th></tr>
+  ${acts.map(a => { const n = needs[a.needId]; return `<tr><td>${fmtDate(a.date)}</td><td>${esc(n ? n.need : '')}</td><td>${esc(n ? n.actions : '')}</td><td><b>${esc(a.title)}</b><br>${esc(a.type)}${a.provider ? '<br>' + esc(a.provider) : ''}${a.topics ? '<br>' + esc(a.topics) : ''}${a.refs ? '<br><i>Refs:</i> ' + esc(a.refs) : ''}</td><td>${esc(a.reflection)}${(a.standards || []).length ? '<br><i>Standards:</i> ' + esc(a.standards.map(s => s.replace(/^(\w+) (\d)\..*/, '$1 $2')).join(', ')) : ''}</td><td>${(a.files || []).length ? plural(a.files.length, 'file') : '—'}</td><td>${fmtH(a.hours)}<br><small>${(a.streams || []).map(s => STREAMS[s].short).join(', ')}</small></td></tr>`; }).join('')}
+  <tr><td colspan="6" style="text-align:right"><b>Total hours logged</b></td><td><b>${fmtH(acts.reduce((s, a) => s + (+a.hours || 0), 0))}</b></td></tr></table>
+  ${ev ? `<h2>Evidence</h2>${ev}` : ''}`;
+  printHTML(html, `CPD-portfolio-${period(y).label}`);
+}
+function printResume() {
+  const p = S.profile;
+  const html = `<div class="rs-h">${p.photo ? `<img src="${p.photo}">` : ''}<div><h1>${esc(p.name)}</h1><div style="font-size:12pt">${esc(p.headline)}</div><div style="color:#555">${[p.location, p.state].filter(Boolean).map(esc).join(', ')}${p.email ? ' · ' + esc(p.email) : ''}${p.phone ? ' · ' + esc(p.phone) : ''}</div><div style="color:#555">${regLabel()}${p.ahpra ? ' · Ahpra registration ' + esc(p.ahpra) : ''}</div></div></div>
+  ${p.about ? `<h2>Profile</h2><p style="white-space:pre-wrap">${esc(p.about)}</p>` : ''}
+  ${(p.experience || []).length ? `<h2>Experience</h2>${p.experience.map(e => `<div class="job"><b>${esc(e.role)}</b> — ${esc(e.org)}<br><span style="color:#555">${fmtMonth(e.start)}${e.start ? ' – ' : ''}${e.current ? 'Present' : fmtMonth(e.end)}${e.location ? ' · ' + esc(e.location) : ''}</span>${e.desc ? `<div style="white-space:pre-wrap">${esc(e.desc)}</div>` : ''}</div>`).join('')}` : ''}
+  ${(p.education || []).length ? `<h2>Education</h2>${p.education.map(e => `<div class="job"><b>${esc(e.qual)}</b> — ${esc(e.inst)}${e.year ? ' (' + esc(e.year) + ')' : ''}</div>`).join('')}` : ''}
+  ${(p.licences || []).length ? `<h2>Licences &amp; certifications</h2>${p.licences.map(e => `<div>${esc(e.name)}${e.issuer ? ' — ' + esc(e.issuer) : ''}${e.expiry ? ` (valid to ${fmtDate(e.expiry)})` : ''}</div>`).join('')}` : ''}
+  ${(p.skills || []).length ? `<h2>Skills</h2><p>${p.skills.map(esc).join(' · ')}</p>` : ''}
+  ${(p.languages || []).length ? `<h2>Languages</h2><p>${p.languages.map(esc).join(' · ')}</p>` : ''}
+  <h2>Continuing professional development</h2><p>${(() => { const y = S.year, t = totals(y), r = reqs(); return `CPD year ${period(y).label}: ${Object.keys(r).map(k => `${STREAMS[k].label} ${fmtH(t[k])} h`).join(', ')}. ` + actsIn(y).slice(0, 8).map(a => esc(a.title)).join('; '); })()}</p>`;
+  printHTML(html, `Resume-${(p.name || 'nurse').replace(/\s+/g, '-')}`);
+}
+
+/* =========================================================
+   ACTIONS (event delegation)
+   ========================================================= */
+const ACT = {
+  closeSheet: () => closeSheet(),
+  tab: el => { while (sheets.length) closeSheet(); S.tab = el.dataset.tab; render(); window.scrollTo(0, 0); },
+  setYear: el => { S.year = +el.dataset.y; render(); },
+  newAct: () => openActivity(null),
+  editAct: el => openActivity(S.acts.find(a => a.id === el.dataset.id)),
+  scanNew: () => pick('cam', async f => { const s = await scanEditor(f); if (!s) return; await openActivity(null, { _newFiles: [{ id: uid(), ...s }] }); if (aiReady()) { const b = $('#a_aiRead', topSheet()); if (b) b.click(); } }),
+  editNeed: el => openNeed(el.dataset.id),
+  aiNeeds: el => aiNeeds(el),
+  learnCat: el => { S.learnCat = el.dataset.c; render(); },
+  logFromSite: el => { const s = [...SITES, ...(S.sites.custom || [])].find(x => x.id === el.dataset.id); openActivity(null, { provider: s ? s.name.replace(/ – .*/, '') : '', type: 'Online module / eLearning' }); },
+  hideSite: async el => { S.sites.hidden = [...new Set([...(S.sites.hidden || []), el.dataset.id])]; await save.sites(); render(); },
+  unhideSites: async () => { S.sites.hidden = []; await save.sites(); render(); },
+  delSite: async el => { S.sites.custom = S.sites.custom.filter(s => s.id !== el.dataset.id); await save.sites(); render(); },
+  addSite: () => { const w = openSheet({ title: 'Add a learning site', body: `<label class="f"><span>Name</span><input id="ns_name"></label><label class="f"><span>Web address</span><input id="ns_url" type="url" placeholder="https://"></label><label class="f"><span>Category</span><input id="ns_cat" placeholder="e.g. Emergency" value="My sites"></label><label class="f"><span>Notes</span><textarea id="ns_desc"></textarea></label>`, foot: `<button class="btn block" id="ns_save">Add</button>` });
+    $('#ns_save', w).onclick = async () => { let url = $('#ns_url', w).value.trim(); const name = $('#ns_name', w).value.trim(); if (!name || !url) return toast('Add a name and web address'); if (!/^https?:\/\//i.test(url)) url = 'https://' + url; S.sites.custom.push({ id: 'c' + uid(), name, url, cat: $('#ns_cat', w).value.trim() || 'My sites', desc: $('#ns_desc', w).value.trim(), tag: 'My site' }); await save.sites(); closeSheet(); render(); }; },
+  editBasics: () => editBasics(), editAbout: () => editAbout(), editSkills: () => editSkills(),
+  editExp: el => editList('exp', el.dataset.id), editEdu: el => editList('edu', el.dataset.id), editLic: el => editList('lic', el.dataset.id),
+  printResume: () => printResume(), printPortfolio: () => printPortfolio(), exportCSV: () => exportCSV(), ics: () => exportICS(),
+  openAI: () => openAI(), openSettings: () => openSettings(),
+  editPractice: () => editPractice(),
+  thanks: () => openThanks(),
+  thanksDismiss: async () => { S.settings.thanksSeen = [...new Set([...(S.settings.thanksSeen || []), S.year])]; await save.settings(); render(); },
+  privacy: () => openSheet({ title: 'Privacy statement', body: `<div class="small" style="margin-top:12px">${PRIVACY_HTML}</div>` }),
+  timer: () => {
+    if (S.settings.timer) return toast('Timer running — stop it on the Home screen');
+    const w = openSheet({ title: 'Study timer', body: `<p class="small muted">Start the timer when you sit down to read or do a module. When you stop, it opens a log entry with the time filled in (rounded to the nearest 15 minutes).</p><label class="f"><span>What are you working on? (optional)</span><input id="tm_t" placeholder="e.g. Reading sepsis guideline"></label>`, foot: `<button class="btn block" id="tm_go">Start timer</button>` });
+    $('#tm_go', w).onclick = async () => { S.settings.timer = { start: Date.now(), title: $('#tm_t', w).value.trim() }; await save.settings(); closeSheet(); render(); };
+  },
+  timerStop: async () => { const t = S.settings.timer; if (!t) return; const h = Math.max(.25, Math.round((Date.now() - t.start) / 9e5) / 4); S.settings.timer = null; await save.settings(); render(); openActivity(null, { title: t.title, hours: h, type: 'Self-directed learning (journal articles, guidelines)', date: iso(new Date(t.start)) }); },
+  timerCancel: async () => { if (!(await confirmBox('Discard this timer?', 'Discard', true))) return; S.settings.timer = null; await save.settings(); render(); },
+  backup: () => doBackup(), restore: () => doRestore(),
+  theme: async el => { S.settings.theme = el.dataset.t; await save.settings(); applyTheme(); $$('[data-act=theme]').forEach(b => b.classList.toggle('on', b === el)); },
+  wipe: async () => { if (!(await confirmBox('This permanently deletes your profile, CPD records and certificates from this device. Back up first if you need them.', 'Delete everything', true))) return; for (const s of ['kv', 'activities', 'files']) await DB.clear(s); location.reload(); },
+  onbNext: async () => {
+    if (onbStep === 1) { readBasics(document); if (!S.profile.name) return toast('Please add your name'); await save.profile(); }
+    if (onbStep === 2) { const role = $('#o_role').value.trim(); if (role) { S.profile.experience.unshift({ id: uid(), role, org: $('#o_org').value.trim(), location: '', start: $('#o_start').value, end: '', current: true, desc: $('#o_desc').value.trim() }); await save.profile(); } return finishOnb(); }
+    onbStep++; renderOnboarding(); window.scrollTo(0, 0);
+  },
+  onbSkip: () => finishOnb(),
+  onbRestore: () => doRestore(),
+};
+async function finishOnb() { S.settings.onboarded = true; await save.settings(); $('#app').innerHTML = ''; S.tab = 'home'; render(); toast('Welcome to CPD Compass'); }
+document.addEventListener('click', e => { const el = e.target.closest('[data-act]'); if (!el) return; const fn = ACT[el.dataset.act]; if (fn) { e.preventDefault(); fn(el, e); } });
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && sheets.length) closeSheet(); });
+
+/* ---------- boot ---------- */
+(async () => {
+  try { await load(); render(); }
+  catch (e) { $('#app').innerHTML = `<div class="wrap" style="padding:40px 16px"><h2>Couldn't open storage</h2><p>${esc(e.message)}</p><p class="muted">Private browsing can block storage. Open CPD Compass in a normal browser window.</p></div>`; }
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
+    const hadController = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.register('sw.js').then(r => r.update()).catch(() => {});
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!hadController) return;
+      const b = document.createElement('div'); b.className = 'card'; b.style.cssText = 'position:fixed;left:16px;right:16px;top:calc(64px + var(--safe-t));z-index:40;max-width:600px;margin:0 auto;display:flex;align-items:center;gap:10px';
+      b.innerHTML = '<div style="flex:1"><b>CPD Compass has been updated.</b><div class="small muted">Reload to get the new version. Your records are kept.</div></div><button class="btn sm">Reload</button>';
+      b.querySelector('button').onclick = () => location.reload(); document.body.appendChild(b);
+    });
+  }
+})();
+</script>
+</body>
+</html>
